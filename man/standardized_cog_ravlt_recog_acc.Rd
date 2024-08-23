@@ -16,17 +16,20 @@ standardized_cog_ravlt_recog_acc(
 \item{ravlt_recog_age_groups}{age group; a vector of same length as \code{cog_digsym}
 with entries as one of the following
 \itemize{
-\item 'AAAAA' for ages \link{60,62}
-\item 'BBBBB' for ages \link{63,65}
-\item 'CCCCC' for ages \link{66,68}
-\item 'DDDDD' for ages \link{69,71}
-\item 'EEEEE' for ages \link{72,74}
-\item 'FFFFF' for ages \link{75,77}
-\item 'GGGGG' for ages \link{78,80}
-\item 'HHHHH' for ages \link{81,83}
-\item 'IIIII' for ages \link{84,86}
+\item 'AAAAA' for ages [60,62]
+\item 'BBBBB' for ages [63,65]
+\item 'CCCCC' for ages [66,68]
+\item 'DDDDD' for ages [69,71]
+\item 'EEEEE' for ages [72,74]
+\item 'FFFFF' for ages [75,77]
+\item 'GGGGG' for ages [78,80]
+\item 'HHHHH' for ages [81,83]
+\item 'IIIII' for ages [84,86]
 \item 'JJJJJ' for ages >87
 }}
+
+\item{sex}{vector of same length as \code{cog_digsym} containing the corresponding
+sex of the participants. Each entry must be either "m" (male) or "f" (female)}
 }
 \value{
 A numeric vector of same length as \code{cog_ravlt_recog_acc} with the standardized scores.
@@ -35,6 +38,6 @@ A numeric vector of same length as \code{cog_ravlt_recog_acc} with the standardi
 Get standardized RAVLT Recognition Accuracy score
 }
 \examples{
-standardized_cog_ravlt_recog_acc(75, 'DDDDD')
+standardized_cog_ravlt_recog_acc(75, 'DDDDD', "m")
 
 }

@@ -6,15 +6,18 @@
 \title{Demo Data Set}
 \format{
 \subsection{\code{demo_data}}{
+
+\describe{This is a completely scrambled version of a subset of WLS participants. \code{ptid/cog_studyid}
+are assigned randomly, and all other variables have been randomly reassigned in such a
+way that missing values were preserved. This might have caused some abnormalities such
+as some "participants" being younger at later visits than they were at earlier visits.
+}
 }
 }
 \usage{
 demo_data
 }
 \description{
-This is a completely scrambled version of a subset of WLS participants. \code{ptid/cog_studyid}
-are assigned randomly, and all other variables have been randomly reassigned in such a
-way that missing values were preserved. This might have caused some abnormalities such
-as some "participants" being younger at later visits than they were at earlier visits.
+Demo Data Set
 }
 \keyword{datasets}

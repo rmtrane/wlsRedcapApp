@@ -5,14 +5,14 @@
 \title{Function to Plot Cognitive Variables over Time}
 \usage{
 plot_cog_var(
-  redcap_dat,
+  dat,
   studyid = "102038g",
   var_to_plot = "cog_flc_flu",
   type = c("raw", "standardized", "ss")
 )
 }
 \arguments{
-\item{redcap_dat}{Data to use}
+\item{dat}{Data to use}
 
 \item{studyid}{ID of participant to plot}
 

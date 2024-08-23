@@ -5,21 +5,50 @@
 \title{Create Row Labels for Main Table}
 \usage{
 var_labels(
-  cog_cdr_sob,
-  cog_tmta_err,
-  cog_tmta_lines,
-  cog_benson_retained,
-  cog_benson_recog,
-  cog_ravlt_a1,
-  cog_ravlt_a2,
-  cog_ravlt_a3,
-  cog_ravlt_a4,
-  cog_ravlt_a5,
-  cog_ravlt_recog_tp,
-  cog_ravlt_recog_tn,
-  cog_tmtb_err,
-  cog_tmtb_lines
+  cog_cdr_sob = NA,
+  cog_tmta_err = NA,
+  cog_tmta_lines = NA,
+  cog_benson_retained = NA,
+  cog_benson_recog = NA,
+  cog_ravlt_a1 = NA,
+  cog_ravlt_a2 = NA,
+  cog_ravlt_a3 = NA,
+  cog_ravlt_a4 = NA,
+  cog_ravlt_a5 = NA,
+  cog_ravlt_recog_tp = NA,
+  cog_ravlt_recog_tn = NA,
+  cog_tmtb_err = NA,
+  cog_tmtb_lines = NA
 )
+}
+\arguments{
+\item{cog_cdr_sob}{Raw observed value of CDR Sob}
+
+\item{cog_tmta_err}{number of errors made on Trail Making Test A}
+
+\item{cog_tmta_lines}{lines completed on Trail Making Test A}
+
+\item{cog_benson_retained}{percent retained on Benson}
+
+\item{cog_benson_recog}{Benson recognized}
+
+\item{cog_ravlt_a1}{Rey AVLT Trial 1}
+
+\item{cog_ravlt_a2}{Rey AVLT Trial 2}
+
+\item{cog_ravlt_a3}{Rey AVLT Trial 3}
+
+\item{cog_ravlt_a4}{Rey AVLT Trial 4}
+
+\item{cog_ravlt_a5}{Rey AVLT Trial 5}
+
+\item{cog_ravlt_recog_tp}{Rey AVLT Recognition True Positives}
+
+\item{cog_ravlt_recog_tn}{Rey AVLT Recognition True Negatives}
+
+\item{cog_tmtb_err}{number of errors made on Trail Making Test B}
+
+\item{cog_tmtb_lines}{lines completed on Trail Making Test B}
 }
 \description{
 The main table of interest uses some of the observed data in the row labels.

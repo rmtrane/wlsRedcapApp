@@ -7,14 +7,16 @@
 \usage{
 mainTableUI(id)
 
-mainTableServer(id, redcap_dat, studyid, current_date, table_font_size = 100)
+mainTableServer(id, dat, studyid, date, table_font_size = 100)
 }
 \arguments{
 \item{id}{An ID string to match module UI and server UI}
 
+\item{dat}{Data set to use}
+
 \item{studyid}{Study ID for participant to create summary table for}
 
-\item{current_date}{The visit date to use for the table}
+\item{date}{The visit date to use for the table}
 
 \item{table_font_size}{Percentage font size to use. Used to scale table}
 }

@@ -1,4 +1,37 @@
-url: https://rmtrane.github.com/wlsRedcapApp
+url: https://rmtrane.github.io/wlsRedcapApp/
 template:
   bootstrap: 5
 
+reference:
+  - title: "Functions"
+    desc: >
+      Set of functions underlying the Shiny app
+    contents:
+      - add_standardized_scores
+      - demographics_table
+      - functional_measures_table
+      - main_table
+      - plot_cog_var
+      - prep_data
+      - standardized_cog_digsym
+      - standardized_cog_flc_flu
+      - standardized_cog_ravlt_recog_acc
+      - var_labels
+  - title: "Shiny App and Modules"
+    desc: >
+      These functions are the foundation of the Shiny app
+    contents:
+      - ends_with("App")
+      - ends_with("UI")
+      - ends_with("Server")
+  - title: "Data"
+    desc: >
+      The data included in this package
+    contents:
+      - cowat_ranges
+      - demo_data
+      - dig_symb_ranges
+      - male_female
+      - otmt
+      - ravlt_recog_ranges
+      - ravlt_trials_m_sd

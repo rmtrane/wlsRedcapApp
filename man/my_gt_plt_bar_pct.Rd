@@ -51,3 +51,4 @@ my_gt_plt_bar_pct(
 This updates the \code{gtExtras::gt_plt_bar_pct} to handle missing values as
 desired.
 }
+\keyword{internal}

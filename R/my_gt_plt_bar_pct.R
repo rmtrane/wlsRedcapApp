@@ -5,7 +5,8 @@
 #'
 #' @inheritParams gtExtras::gt_plt_bar_pct
 #' @param missing_text Text to display for labels when cell is `NA`. Default '---'
-
+#'
+#' @keywords internal
 
 my_gt_plt_bar_pct <- function(
     gt_object,
