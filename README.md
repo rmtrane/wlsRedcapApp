@@ -1,6 +1,11 @@
 # R package for Working with NACC T-Cog Neuropsychological Assessments
 Ralph Møller Trane
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/rmtrane/wlsRedcapApp/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rmtrane/wlsRedcapApp/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 ## Get Started
 
 Install this package from GitHub:
@@ -31,8 +36,3 @@ use these data in the Shiny app. Simply follow the instructions in the
 app.
 
 For more information, see https://rmtrane.github.io/wlsRedcapApp
-
-<!-- badges: start -->
-
-[![R-CMD-check](https://github.com/rmtrane/wlsRedcapApp/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rmtrane/wlsRedcapApp/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
