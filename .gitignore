@@ -1,0 +1,8 @@
+data-raw/
+scripts/
+
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+docs

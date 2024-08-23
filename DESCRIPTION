@@ -1,0 +1,43 @@
+Package: wlsRedcapApp
+Type: Package
+Title: What the Package Does (Title Case)
+Version: 0.1.0
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: CC BY 4.0
+Encoding: UTF-8
+LazyData: true
+Authors@R: c(
+    person("Ralph", "Møller Trane", , "rtrane@wisc.edu", role = c("aut", "cre"))
+  )
+Depends: 
+    R (>= 2.10)
+RoxygenNote: 7.3.2
+Roxygen: list(markdown = TRUE)
+Imports: 
+    dplyr,
+    bslib,
+    shiny,
+    DT,
+    ggplot2,
+    glue,
+    gt,
+    gtExtras,
+    here,
+    lubridate,
+    methods,
+    purrr,
+    readr,
+    REDCapR,
+    rlang,
+    safer,
+    shinycssloaders,
+    stats,
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect,
+    utils
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
