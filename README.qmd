@@ -9,7 +9,7 @@ format: gfm
 <!-- badges: end -->
 
 
-For full documentation, see https://rmtrane.github.io/wlsRedcapApp. Test
+For full documentation, see https://rmtrane.github.io/wlsRedcapApp.
 
 ## Get Started
 

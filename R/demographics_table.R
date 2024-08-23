@@ -22,15 +22,15 @@ demographics_table <- function(
       .data$cog_studyid == studyid
     ) |>
     dplyr::select(
-      `Study ID:` = .data$cog_studyid,
-      `Education (years):` = .data$cog_education,
-      .data$cog_age,
-      `Gender:` = .data$cog_sex,
-      `Handedness:` = .data$cog_handedness,
-      `Race:` = .data$cog_race
+      `Study ID:` = "cog_studyid",
+      `Education (years):` = "cog_education",
+      "cog_age",
+      `Gender:` = "cog_sex",
+      `Handedness:` = "cog_handedness",
+      `Race:` = "cog_race"
     ) |>
     dplyr::arrange(
-      .data$cog_age
+      "cog_age"
     )
 
   if (nrow(cur_pt_dat) > 1) {
@@ -41,14 +41,14 @@ demographics_table <- function(
       ) |>
       unique() |>
       dplyr::rename(
-        `Age at Visits:` = .data$cog_age
+        `Age at Visits:` = "cog_age"
       )
 
     stopifnot("One or more of the following varies between visits: education, gender, handedness, race" = nrow(cur_pt_dat) == 1)
   } else {
     cur_pt_dat <- cur_pt_dat |>
       dplyr::rename(
-        `Age at Visit:` = .data$cog_age
+        `Age at Visit:` = "cog_age"
       )
   }
 

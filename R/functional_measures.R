@@ -25,17 +25,17 @@ functional_measures_table <- function(
       visit = paste("Visit", order(.data$cog_test_date))
     ) |>
     dplyr::select(
-      .data$visit,
-      `FAS:` = .data$cog_fas,
-      `Informant:` = .data$cog_iqcode_inform,
-      `Self:` = .data$cog_iqcode_self
+      "visit",
+      `FAS:` = "cog_fas",
+      `Informant:` = "cog_iqcode_inform",
+      `Self:` = "cog_iqcode_self"
     ) |>
     tidyr::pivot_longer(
-      -.data$visit
+      cols = -"visit"
     ) |>
     tidyr::pivot_wider(
-      names_from = .data$visit,
-      values_from = .data$value
+      names_from = "visit",
+      values_from = "value"
     ) |>
     dplyr::mutate(
       name = dplyr::if_else(.data$name == "FAS", "**FAS**", .data$name)
