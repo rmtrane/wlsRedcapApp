@@ -1,0 +1,20 @@
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+name: render-qmds.yaml
+
+permissions: read-all
+
+jobs:
+  pkgdown:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Render GitHub README
+        uses: quarto-dev/quarto-actions/render@v2
+        with:
+          to: markdown_github
+          path: README.qmd
