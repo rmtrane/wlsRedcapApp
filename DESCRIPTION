@@ -1,9 +1,10 @@
 Package: wlsRedcapApp
 Type: Package
-Title: What the Package Does (Title Case)
+Title: NACC T-Cog Neuropsychological Assessments
 Version: 0.1.0
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: Functions for working with NACC T-Cog Neuropsychological Assessments.
+    Most notably this includes a Shiny application specifically for work with 
+    WLS REDCap data. 
 License: CC BY 4.0
 Encoding: UTF-8
 LazyData: true
