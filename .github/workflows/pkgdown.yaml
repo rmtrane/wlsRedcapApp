@@ -43,7 +43,7 @@ jobs:
       - name: Render pkgdown home page
         uses: quarto-dev/quarto-actions/render@v2
         with:
-          to: markdown_github
+          to: gfm
           path: pkgdown/index.qmd
 
       - name: Build site
