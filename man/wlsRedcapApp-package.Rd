@@ -3,9 +3,9 @@
 \docType{package}
 \name{wlsRedcapApp-package}
 \alias{wlsRedcapApp-package}
-\title{wlsRedcapApp: What the Package Does (Title Case)}
+\title{wlsRedcapApp: NACC T-Cog Neuropsychological Assessments}
 \description{
-More about what it does (maybe more than one line) Use four spaces when indenting paragraphs within the Description.
+Functions for working with NACC T-Cog Neuropsychological Assessments. Most notably this includes a Shiny application specifically for work with WLS REDCap data.
 }
 \seealso{
 Useful links:

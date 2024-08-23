@@ -25,9 +25,11 @@ It removes records without a valid age before running \code{add_standardized_sco
 which adds age groups and standardized scores.
 }
 \examples{
+\dontrun{
 prep_data(
   file = "~/Downloads/WisconsinLongitudina_DATA_2024-08-10_1500.csv",
   nas = c("NA", "N/A", "-", " ", "", "#REF!", "17/22", "#DIV/0!", "#VALUE!")
 )
+}
 
 }
