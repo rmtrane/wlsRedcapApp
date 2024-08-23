@@ -1,4 +1,4 @@
-# Untitled
+# R package for Working with NACC T-Cog Neuropsychological Assessments
 Ralph Møller Trane
 
 ## Get Started
