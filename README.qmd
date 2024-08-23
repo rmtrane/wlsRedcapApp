@@ -1,7 +1,7 @@
 ---
 title: "R package for Working with NACC T-Cog Neuropsychological Assessments"
 author: "Ralph Møller Trane"
-format: markdown_github
+format: gfm
 ---
 
 <!-- badges: start -->

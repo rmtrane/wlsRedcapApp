@@ -40,7 +40,7 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Render GitHub README
+      - name: Render pkgdown home page
         uses: quarto-dev/quarto-actions/render@v2
         with:
           to: markdown_github
