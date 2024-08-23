@@ -10,10 +10,12 @@
 #' @param nas character vector of strings that should be treated as NA
 #'
 #' @examples
+#' \dontrun{
 #' prep_data(
 #'   file = "~/Downloads/WisconsinLongitudina_DATA_2024-08-10_1500.csv",
 #'   nas = c("NA", "N/A", "-", " ", "", "#REF!", "17/22", "#DIV/0!", "#VALUE!")
 #' )
+#' }
 #'
 #' @export
 
