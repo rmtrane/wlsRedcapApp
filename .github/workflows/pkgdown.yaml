@@ -43,6 +43,7 @@ jobs:
       - name: Render pkgdown home page
         uses: quarto-dev/quarto-actions/render@v2
         with:
+	  version: pre-release
           to: gfm
           path: pkgdown/index.qmd
 
