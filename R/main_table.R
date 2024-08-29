@@ -142,7 +142,8 @@ main_table <- function(
                     "cog_otmta_time", "cog_otmtb_time",
                     "cog_otmta_error", "cog_otmtb_error") ~ 1 - pnorm(.data$`z-score`),
         # For other standardized scores, left tailed probabilities:
-        .data$name %in% c(unique(male_female$name), unique(ravlt_trials_m_sd$name)) ~ pnorm(.data$`z-score`),
+        .data$name %in% names(for_zscores) #c(unique(male_female$name), unique(ravlt_trials_m_sd$name))
+          ~ pnorm(.data$`z-score`),
         # Special cases go here, such as all RAVLT
         .data$name %in% c("cog_flc_flu", "cog_digsym", "cog_ravlt_recog_acc") ~ c(1,1,1,1,2,5,9,16,25,37,50,63,75,84,91,95,98,99,99,99)[pmax(1, .data$SS+1)]/100,
         .default = NA

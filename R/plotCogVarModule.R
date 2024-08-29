@@ -41,51 +41,53 @@ plotCogVarServer <- function(id, dat, studyid) {
 
   shiny::moduleServer(id, function(input, output, session) {
 
-    ## Get variables available
-    var_labels_for_plot <- c(
-      ## General Cognition
-      "cog_cdr_global" = "CDR Global",
-      "cog_moca" = "MoCA",
-      "cog_moca_blind" = "MoCA Blind",
-      "cog_ticsm" = "TICS-m",
-      ## Attention/Processing Speed
-      "cog_tmta_time" = "Trailmaking Part A",
-      "cog_otmta_time" = "Oral Trailmaking Part A - Completion Time",
-      "cog_otmta_error" = "Oral Trailmaking Part A - Errors",
-      "cog_nsf_total" = "Number Span Forward - Total",
-      "cog_nsf_span" = "Number Span Forward - Span Length",
-      "cog_nsb_total" = "Number Span Backward - Total",
-      "cog_nsb_span" = "Number Span Backward - Span Length",
-      "cog_digsym" = "WAIS-R Digit Symbol",
-      ## Language
-      "cog_mint_tot" = "MINT",
-      "cog_animal_flu" = "Animal Fluency",
-      "cog_veg_flu" = "Vegetable Fluency",
-      "cog_fl_flu" = "F+L Words",
-      "cog_flc_flu" = "F+L+C Words",
-      "cog_f_flu" = "F Words",
-      "cog_l_flu" = "L Words",
-      ## Visuospatial
-      "cog_benson_copy" = "Benson Figure Copy",
-      ## Memory
-      "cog_benson_delay" = "Benson Delay",
-      "cog_craft_imm_ver" = "Craft Immediate - Verbatim",
-      "cog_craft_imm_par" = "Craft Immediate - Paraphrase",
-      "cog_craft_delay_verb" = "Craft Delay - Verbatim",
-      "cog_craft_delay_par" = "Craft Delay - Paraphrase",
-      "cog_ravlt_a1_a5_total" = "RAVLT Total Learning",
-      "cog_ravlt_b1" = "RAVLT Distractor List",
-      "cog_ravlt_a6" = "RAVLT Short Delay",
-      "cog_ravlt_a7" = "RAVLT Long Delay",
-      "cog_ravlt_recog_acc" = "RAVLT Recognition",
-      ## Execute Functioning
-      "cog_tmtb_time" = "Trailmaking Part B",
-      "cog_moca_clock" = "Clock Drawing Test",
-      "cog_otmtb_time" = "Oral Trailmaking Part B - Completion Time",
-      "cog_otmtb_error" = "Oral Trailmaking Part B - Errors",
-      ## Mood
-      "cog_gds15" = "GDS-15 (Depression Symptoms)"
-    )
+    # ## Get variables available
+    # var_labels_for_plot <- c(
+    #   ## General Cognition
+    #   "cog_cdr_global" = "CDR Global",
+    #   "cog_moca" = "MoCA",
+    #   "cog_moca_blind" = "MoCA Blind",
+    #   "cog_ticsm" = "TICS-m",
+    #   ## Attention/Processing Speed
+    #   "cog_tmta_time" = "Trailmaking Part A",
+    #   "cog_otmta_time" = "Oral Trailmaking Part A - Completion Time",
+    #   "cog_otmta_error" = "Oral Trailmaking Part A - Errors",
+    #   "cog_nsf_total" = "Number Span Forward - Total",
+    #   "cog_nsf_span" = "Number Span Forward - Span Length",
+    #   "cog_nsb_total" = "Number Span Backward - Total",
+    #   "cog_nsb_span" = "Number Span Backward - Span Length",
+    #   "cog_digsym" = "WAIS-R Digit Symbol",
+    #   ## Language
+    #   "cog_mint_tot" = "MINT",
+    #   "cog_animal_flu" = "Animal Fluency",
+    #   "cog_veg_flu" = "Vegetable Fluency",
+    #   "cog_fl_flu" = "F+L Words",
+    #   "cog_flc_flu" = "F+L+C Words",
+    #   "cog_f_flu" = "F Words",
+    #   "cog_l_flu" = "L Words",
+    #   ## Visuospatial
+    #   "cog_benson_copy" = "Benson Figure Copy",
+    #   ## Memory
+    #   "cog_benson_delay" = "Benson Delay",
+    #   "cog_craft_imm_ver" = "Craft Immediate - Verbatim",
+    #   "cog_craft_imm_par" = "Craft Immediate - Paraphrase",
+    #   "cog_craft_delay_verb" = "Craft Delay - Verbatim",
+    #   "cog_craft_delay_par" = "Craft Delay - Paraphrase",
+    #   "cog_ravlt_a1_a5_total" = "RAVLT Total Learning",
+    #   "cog_ravlt_b1" = "RAVLT Distractor List",
+    #   "cog_ravlt_a6" = "RAVLT Short Delay",
+    #   "cog_ravlt_a7" = "RAVLT Long Delay",
+    #   "cog_ravlt_recog_acc" = "RAVLT Recognition",
+    #   ## Execute Functioning
+    #   "cog_tmtb_time" = "Trailmaking Part B",
+    #   "cog_moca_clock" = "Clock Drawing Test",
+    #   "cog_otmtb_time" = "Oral Trailmaking Part B - Completion Time",
+    #   "cog_otmtb_error" = "Oral Trailmaking Part B - Errors",
+    #   ## Mood
+    #   "cog_gds15" = "GDS-15 (Depression Symptoms)"
+    # )
+
+    var_labels_for_plot <- cog_vars_labels
 
     cur_pt_dat <- shiny::reactiveVal()
     var_avail <- shiny::reactiveVal()

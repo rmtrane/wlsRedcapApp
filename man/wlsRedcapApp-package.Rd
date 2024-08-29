@@ -17,5 +17,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Ralph Møller Trane \email{rtrane@wisc.edu}
 
+Authors:
+\itemize{
+  \item Victoria Williams
+}
+
 }
 \keyword{internal}

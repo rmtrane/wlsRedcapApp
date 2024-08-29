@@ -1,6 +1,7 @@
 library(tidyverse)
 library(gt)
 library(gtExtras)
+library(bslib)
 
 ui <- page_navbar(
   title = "Main App Title",

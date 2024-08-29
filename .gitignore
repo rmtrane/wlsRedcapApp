@@ -7,3 +7,4 @@ scripts/
 .Ruserdata
 */.DS*
 docs
+inst/doc

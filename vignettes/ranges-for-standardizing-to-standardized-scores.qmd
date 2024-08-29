@@ -1,0 +1,50 @@
+---
+title: "Ranges for Standardizing to Standardized Scores"
+format:
+  html:
+    toc: true
+    toc-location: right
+    html-math-method: mathjax
+execute: 
+  echo: false
+  message: false
+  warning: false
+vignette: >
+  %\VignetteIndexEntry{Ranges for Standardizing to Standardized Scores}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+```{r}
+library(tidyverse)
+library(wlsRedcapApp)
+```
+
+
+# Ranges for Standardizing
+
+```{r}
+#| label: tbl-ravlt-recog-ranges
+#| tbl-cap: "Ranges to use for Rey AVLT Recognition Accuracy (`cog_ravlt_recog_acc`). Columns: Rey AVLT Recognition Accuracy age groups (see Table 3 `vignette('complete-age-tables')`) or sex."
+
+gt::gt(ravlt_recog_ranges)
+```
+
+
+```{r}
+#| label: tbl-cowat-ranges
+#| tbl-cap: "Ranges to use for F+L+C Words (`cog_flc_flu`). Columns: COWAT age groups (see Table 5 `vignette('complete-age-tables')`)"
+
+gt::gt(cowat_ranges)
+```
+
+
+```{r}
+#| label: tbl-digsym-ranges
+#| tbl-cap: "Ranges to use for WAIS-R Digit Symbol (`cog_digsym`). Columns: WAIS-R Digit Symbol age groups (see Table 6 `vignette('complete-age-tables')`)"
+
+gt::gt(digsym_ranges)
+```
+

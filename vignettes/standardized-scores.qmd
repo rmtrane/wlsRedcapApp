@@ -1,0 +1,293 @@
+---
+title: "Standardized Scores"
+format:
+  html:
+    toc: true
+    toc-location: right
+    html-math-method: mathjax
+    self-contained: true
+vignette: >
+  %\VignetteIndexEntry{Standardized Scores}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+Our main goal is to produce standardized scores for a long list of cognitive measures. These standardized scores are meant to transform the raw scores to an "easier-to-interpret" scale. 
+
+We use two approaches for standardization. For a subset of the variables of interest, we calculate z-scores. That is, we subtract an average score from the raw score, and divide by a standard deviation. These means and standard deviations may depend on age, education, and/or sex, and are obtained from previous studies. They are meant to represent average and standard deviations of individuals who are not cognitively impaired. 
+
+The second approach uses standardized scores based on a set of ranges. Again, these ranges are meant to illustrate the range of performance one would expect from individuals who are not cognitively impaired. 
+
+Below, we include more details on how the standardized scores are calculated for all supported cognitive measures.
+
+```{r}
+#| warning: false
+#| message: false
+library(wlsRedcapApp, quietly = T)
+library(tidyverse, quietly = T)
+```
+
+
+# Standardized Scores via z-scores
+
+```{r}
+#| label: tbl-cog-vars-with-z-scores
+#| tbl-cap: "Variables that are standardized using z-scores."
+#| echo: false
+gt::gt(
+  tibble(
+    cog_vars = names(for_zscores),
+    labels = cog_vars_labels[names(for_zscores)]
+  )
+) |> 
+  gt::opt_interactive()
+```
+
+@tbl-cog-vars-with-z-scores shows the variables that are standardized via z-scores. For each variable, the means and standard deviations used can be found in the corresponding entry of the list [`for_zscores`](?for_zscores). Below, we walk through a worked example and also show how to find standardized scores in a data set.
+
+## Worked Example
+
+We can find the means and standard deviations used for the "`r cog_vars_labels[["cog_ravlt_a1_a5_total"]]`" score by using the corresponding `cog_vars` name as given in @tbl-cog-vars-with-z-scores as follows:
+
+```{r}
+for_zscores$cog_ravlt_a1_a5_total
+```
+
+Here, we see that the means (`m`) and standard deviations (`sd`) are given based on an age group. So, to standardize a raw score, we need to know the participants age and find the right age group. For example, say we want to standardize a raw score of 50 from a 72 year old. First, we find the age group either by using Table 2 in `vignette("complete-age-tables")`, or by using the function `get_age_group()`:
+
+```{r}
+get_age_group(age = 72, group_type = "ravlt_trials")
+```
+
+Using this, we can find the mean and standard deviation needed to standardize in the table above as 37.1 and 7.5. The standardized score corresponding to a raw "`r cog_vars_labels[["cog_ravlt_a1_a5_total"]]`" score of 50 from a 72 year old is therefore $\frac{50 - 37.1}{7.5} = 1.72$. 
+
+
+This can also be done using the function `standardize_to_z_scores()`:
+
+```{r}
+standardize_to_z_scores(
+  raw_scores = 50, 
+  cog_var_name = "cog_ravlt_a1_a5_total", 
+  age = 72
+)
+```
+
+## Standardize scores in a data set
+
+Let us consider a manageable data set. From the `?demo_data`, we get the first 20 rows, and just a subset of the columns. 
+
+```{r}
+data_example <- demo_raw_data |> 
+  head(n = 20) |> 
+  select(
+    cog_studyid, 
+    cog_test_date,
+    cog_age,
+    cog_education,
+    cog_sex,
+    cog_craft_delay_par,
+    cog_nsb_total,
+    cog_otmta_time
+  )
+
+gt::gt(data_example)
+```
+
+We want to standardize the three cognitive variables `cog_craft_delay_par`, `cog_nsb_total`, and `cog_otmta_time`. All are standardized using z-scores. Before we can do this, we have to make sure the sex variable is in the right format: `f` for female, and `m` for male. 
+
+```{r}
+data_example <- data_example |> 
+  mutate(
+    cog_sex = case_match(
+      cog_sex,
+      "Male" ~ "m",
+      "Female" ~ "f",
+      .default = NA
+    )
+  )
+```
+
+We can then standardize the variables one at a time:
+
+```{r}
+data_example |> 
+  mutate(
+    standardized_cog_craft_delay_par = standardize_to_z_scores(
+      raw_score = cog_craft_delay_par, 
+      cog_var_name = "cog_craft_delay_par", 
+      age = cog_age, 
+      sex = cog_sex,
+      education = cog_education
+    ),
+    standardized_cog_nsb_total = standardize_to_z_scores(
+      raw_score = cog_nsb_total, 
+      cog_var_name = "cog_nsb_total", 
+      age = cog_age, 
+      sex = cog_sex,
+      education = cog_education
+    ),
+    standardized_cog_otmta_time = standardize_to_z_scores(
+      raw_score = cog_otmta_time, 
+      cog_var_name = "cog_otmta_time", 
+      age = cog_age
+    )
+  ) |> 
+  gt::gt()
+```
+
+Alternatively, we can utilize the function `dplyr::across()` and refer to the `?for_zscores` list to standardize all variables in our data set that are included in the list. We also take advantage of the fact that the name of the columns correspond exactly to the names of the list `?for_zscores`, so we can use the `dplyr::cur_column()` function to get the variable name.
+
+```{r}
+data_example |> 
+  mutate(
+    across(
+      .cols = any_of(names(for_zscores)),
+      .fn = \(x) standardize_to_z_scores(
+        x,
+        cog_var_name = cur_column(),
+        age = cog_age,
+        sex = cog_sex,
+        education = cog_education
+      )
+    )
+  ) |> 
+  gt::gt()
+```
+
+# Range Based Standardized Scores 
+
+For the cognitive measures `r paste0('"', paste(unname(cog_vars_labels[c("cog_digsym", "cog_flc_flu", "cog_ravlt_recog_acc")]), collapse = '", "'), '"')`, we use ranges to look up the standardized scores. We will illustrate this below.
+
+## Worked Example
+
+```{r}
+#| echo: false
+
+ex_cog_ravlt_recog_acc <- 75
+ex_age <- 72
+ex_age_group <- get_age_group(ex_age, "ravlt_recog")
+```
+
+
+Say we are interested in standardizing a `r cog_vars_labels[["cog_ravlt_recog_acc"]]` accuracy of `r paste(ex_cog_ravlt_recog_acc, "%", sep = "")` from a `r ex_age` year old male. To do so, we go to the table of ranges for this cognitive variable:
+
+```{r}
+ravlt_recog_ranges
+```
+
+To look up in this table, we need the sex and the age group for the participant. A 72 year old belongs to age group `r ex_age_group` (see Table 3 in `vignette("complete-age-tables")`). 
+
+Now, we look in the `ravlt_recog_ranges` table (Table 1 in `vignette("ranges-for-standardizing-to-standardized-scores")`), and find the rows for males in column `r ex_age_group` that creates an interval containing 75. @tbl-standardized-scores-worked-example illustrates the thought process. First, we find the column for age group `r ex_age_group` (highlighted in grey). Then we find the two values in this column that creates an interval containing the raw score `r ex_cog_ravlt_recog_acc` (highlighted with red background). Finally, we find the standardized scores in the first column (highlighted with red text). The standardized score is then the smallest of these two values. **I.e. an accuracy score of `r ex_cog_ravlt_recog_acc`% for a `r ex_age` year old male corresponds to a standardized score of `r standardized_ravlt_recog_acc(ex_cog_ravlt_recog_acc, ex_age, sex = "m")`**. 
+
+
+Note: the intervals created in this process are closed on the lower end and open on the upper end. That means, if a raw score matches exactly a score in the table, the standardized score is the one listed in the same row. For our example above, had the participant had a raw score of 73, the standardized score would not have changed, while a score of 77 would have resulted in a standardized score of `r standardized_ravlt_recog_acc(77, ex_age, "m")`. 
+
+```{r}
+#| label: tbl-standardized-scores-worked-example
+#| tbl-cap: "Illustration of how to look up in a table of ranges to find the standardized score. Here, we find the standardized score for a raw Rey AVLT Recognition Accuracy score of 75 from a 72 year old male (age group E)"
+#| echo: false
+
+rows_for_highlight <- ravlt_recog_ranges |> 
+  mutate(
+    row_i = row_number(),
+    abs_diff = abs(.data[[ex_age_group]] - ex_cog_ravlt_recog_acc)
+  ) |> 
+  filter(
+    sex == "m"
+  ) |> 
+  slice_min(
+    abs_diff,
+    n = 2
+  ) |> 
+  pull(row_i)
+  
+
+ravlt_recog_ranges |> 
+  gt::gt() |> 
+  gt::tab_style(
+    style = list(
+      gt::cell_fill(color = "lightgrey")
+    ),
+    locations = gt::cells_body(
+      columns = {{ ex_age_group }}
+    )
+  ) |> 
+  gt::tab_style(
+    style = list(
+      gt::cell_fill(color = "lightgrey")
+    ),
+    locations = gt::cells_body(
+      columns = everything(),
+      rows = rows_for_highlight
+    )
+  ) |> 
+  gt::tab_style(
+    style = list(
+      gt::cell_fill(color = "red")
+    ),
+    locations = gt::cells_body(
+      columns = {{ ex_age_group }},
+      rows = rows_for_highlight
+    )
+  ) |> 
+  gt::tab_style(
+    style = list(
+      gt::cell_text(color = "red")
+    ),
+    locations = gt::cells_body(
+      columns = standardized_score,
+      rows = rows_for_highlight
+    )
+  )
+```
+
+
+
+## Standardized scores in a data set
+
+As before, let us consider an example where we work with an actual data set and want to standardize the three variables `cog_ravlt_recog_acc` (`r cog_vars_labels[["cog_ravlt_recog_acc"]]`), `cog_flc_flu` (`r cog_vars_labels[["cog_flc_flu"]]`), and `cog_digsym` (`r cog_vars_labels[["cog_digsym"]]`).
+
+```{r}
+data_example_2 <- demo_raw_data |> 
+  head(n = 20) |> 
+  select(
+    cog_studyid, 
+    cog_test_date,
+    cog_age,
+    cog_education,
+    cog_sex,
+    cog_ravlt_recog_acc,
+    cog_flc_flu,
+    cog_digsym
+  )
+
+gt::gt(data_example_2)
+```
+
+As before, we need to fix the format of the sex variable to be either `m` (for males) or `f` (for females).
+
+```{r}
+data_example_2 <- data_example_2 |> 
+  mutate(
+    cog_sex = case_match(
+      cog_sex,
+      "Male" ~ "m",
+      "Female" ~ "f",
+      .default = NA
+    )
+  )
+```
+
+We can the create columns with the standardized scores for the three variables of interest using the functions `standardized_*`:
+
+```{r}
+data_example_2 |> 
+  mutate(
+    ss_ravlt_recog_acc = standardized_ravlt_recog_acc(cog_ravlt_recog_acc, age = cog_age, sex = cog_sex),
+    ss_flc_flu = standardized_digsym(cog_flc_flu, age = cog_age),
+    ss_digsym = standardized_digsym(cog_digsym, age = cog_age)
+  )
+```
+

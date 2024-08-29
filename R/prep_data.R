@@ -133,22 +133,25 @@ prep_data <- function(
       na = nas
     )
 
-  if (!exists("raw_dat")) {
+  if (!exists("raw_dat"))
     message("Either 'decrypt_password' or 'file' must be provided")
+
+  if(!lubridate::is.Date(raw_dat$cog_test_date)) {
+    raw_dat <- raw_dat |>
+      dplyr::filter(!is.na(.data$cog_age)) |>
+      dplyr::mutate(
+        cog_test_date = dplyr::case_match(
+          .data$cog_test_date,
+          "2//27/2023" ~ "2/27/2023",
+          "8/12/221"   ~ "8/12/2021",
+          "9/6/20223"  ~ "9/6/2023",
+          "9/7/202023" ~ "9/7/2023",
+          .default = .data$cog_test_date
+        ),
+        cog_test_date = dplyr::if_else(is.na(.data$cog_test_date), NA, lubridate::as_date(.data$cog_test_date, format = "%m/%d/%Y"))
+      )
   }
 
   raw_dat |>
-    dplyr::filter(!is.na(.data$cog_age)) |>
-    dplyr::mutate(
-      cog_test_date = dplyr::case_match(
-        .data$cog_test_date,
-        "2//27/2023" ~ "2/27/2023",
-        "8/12/221"   ~ "8/12/2021",
-        "9/6/20223"  ~ "9/6/2023",
-        "9/7/202023" ~ "9/7/2023",
-        .default = .data$cog_test_date
-      ),
-      cog_test_date = dplyr::if_else(is.na(.data$cog_test_date), NA, lubridate::as_date(.data$cog_test_date, format = "%m/%d/%Y"))
-    ) |>
     add_standardized_scores()
 }

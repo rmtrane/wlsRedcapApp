@@ -7,19 +7,34 @@ format: gfm
 This R package provides functions to work with outcomes from the NACC T-Cog Neuropsychological Assessment. The main purpose is the creation of a summary table used when dementia diagnoses are decided on through consensus (see table below^[Note that Percentile numbers are rendered weird on this front page. For more accurate representation of the table, see the `main_table()` reference page])
 
 ```{r}
-#| label: tbl-main-table-ex
-#| tbl-cap: "Example of the NACC T-Cog Neuropsychological Assessment Summary Table"
-#| tbl-cap-location: "margin"
+#| eval: false
 
 library(wlsRedcapApp)
 
 main_table(
   demo_data, 
-  demo_data$ptid[1], 
-  demo_data$cog_test_date[1]
+  studyid = "326231g", 
+  cur_date = "8/9/2021"
 )
 ```
 
+```{r}
+#| include: false
+library(wlsRedcapApp)
+
+home_page_table <- main_table(
+  demo_data, 
+  studyid = "326231g", 
+  cur_date = "8/9/2021"
+)
+
+gt::gtsave(home_page_table, filename = here::here("man/figures/home_page_table.png"))
+```
+![](man/figures/home_page_table.png)
+
+<!-- <div align="center"> -->
+<!-- <img src="man/figures/home_page_table.png"> -->
+<!-- </div> -->
 
 ## Get Started
 

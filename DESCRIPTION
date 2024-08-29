@@ -9,7 +9,8 @@ License: CC BY 4.0
 Encoding: UTF-8
 LazyData: true
 Authors@R: c(
-    person("Ralph", "Møller Trane", , "rtrane@wisc.edu", role = c("aut", "cre"))
+    person("Ralph", "Møller Trane", , "rtrane@wisc.edu", role = c("aut", "cre")),
+    person("Victoria", "Williams", role = "aut")
   )
 Depends: 
     R (>= 2.10)
@@ -40,6 +41,9 @@ Imports:
     tidyselect,
     utils
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: https://rmtrane.github.io/wlsRedcapApp/
+VignetteBuilder: knitr

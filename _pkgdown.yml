@@ -9,13 +9,15 @@ reference:
     contents:
       - add_standardized_scores
       - demographics_table
+      - get_age_group
       - functional_measures_table
       - main_table
       - plot_cog_var
       - prep_data
-      - standardized_cog_digsym
-      - standardized_cog_flc_flu
-      - standardized_cog_ravlt_recog_acc
+      - standardized_digsym
+      - standardized_flc_flu
+      - standardized_ravlt_recog_acc
+      - standardize_to_z_scores
       - var_labels
   - title: "Shiny App and Modules"
     desc: >
@@ -30,8 +32,8 @@ reference:
     contents:
       - cowat_ranges
       - demo_data
-      - dig_symb_ranges
-      - male_female
-      - otmt
+      - demo_raw_data
+      - digsym_ranges
       - ravlt_recog_ranges
-      - ravlt_trials_m_sd
+      - for_zscores
+      - cog_vars_labels

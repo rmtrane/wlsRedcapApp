@@ -14,174 +14,62 @@
 #' @export
 
 add_standardized_scores <- function(dat) {
+  out <- dat
 
-  ## Start 'out' data
-  out <- dat |>
-    dplyr::mutate(
-      edu_group = c("A", "B", "C", "D")[findInterval(.data$cog_education, c(0, 13, 16, 17, Inf))],
-      UDS_age_group = findInterval(.data$cog_age, c(0, 60, 70, 80, 90, Inf))
-    )
-
-  ## Male/female
-  if (any(colnames(out) %in% unique(male_female$name))) {
-    from_male_female <- out |>
-      tidyr::pivot_longer(
-        cols = tidyselect::any_of(unique(male_female$name)),
-        names_to = "name",
-        values_to = "raw"
-      ) |>
-      dplyr::left_join(
-        male_female
-      ) |>
-      dplyr::mutate(
-        standardized = (.data$raw - .data$m) / .data$sd
-      ) |>
-      dplyr::select(
-        -.data$variable, -.data$m, -.data$sd
-      ) |>
-      tidyr::pivot_wider(
-        names_from = .data$name,
-        values_from = c(.data$raw, .data$standardized)
-      )
-
-    out <- dplyr::left_join(
-      out |> dplyr::select(-tidyselect::any_of(unique(male_female$name))),
-      from_male_female
-    )
-  }
-
-  ## OTMT
-  if (any(colnames(out) %in% unique(otmt$name))) {
-    from_otmt <- out |>
-      dplyr::select(
-        .data$cog_studyid,
-        .data$cog_test_date,
-        .data$cog_sex,
-        .data$cog_age,
-        tidyselect::any_of(unique(otmt$name))
-      ) |>
-      dplyr::mutate(
-        otmt_age_group = c("AA", "BB", "CC", "DD", "EE", "FF")[
-          findInterval(.data$cog_age, c(20, 30, 40, 50, 60, 70, Inf))
-        ]
-      ) |>
-      tidyr::pivot_longer(
-        cols = tidyselect::any_of(unique(otmt$name)),
-        names_to = "name",
-        values_to = "raw"
-      ) |>
-      dplyr::left_join(
-        otmt
-      ) |>
-      dplyr::mutate(
-        standardized = (.data$raw - .data$m) / .data$sd
-      ) |>
-      dplyr::select(
-        -.data$m, -.data$sd
-      ) |>
-      tidyr::pivot_wider(
-        names_from = .data$name,
-        values_from = c(.data$raw, .data$standardized)
-      )
-
-    out <- dplyr::left_join(
-      out |> dplyr::select(-tidyselect::any_of(unique(otmt$name))),
-      from_otmt
-    )
-  }
-
-  ## F+L+C Fluency
-  if ("cog_flc_flu" %in% colnames(out)) {
+  ## If any variables present for which we get z-scores, calculate z-scores
+  if (any(colnames(dat) %in% names(for_zscores))){
     out <- out |>
-      dplyr::rename(
-        raw_cog_flc_flu = .data$cog_flc_flu
-      ) |>
       dplyr::mutate(
-        cowat_age_groups = c("XXX","AAA", "BBB", "CCC", "DDD", "EEE", "FFF", "GGG", "HHH", "III", "JJJ", "KKK", "YYY")[
-          findInterval(.data$cog_age, c(0, 56, 63, 66, 69, 72, 75, 78, 81, 84, 87, 90, 97, Inf))
-        ],
-        ss_cog_flc_flu = standardized_cog_flc_flu(.data$raw_cog_flc_flu, .data$cowat_age_groups)
-      )
-  }
-
-  ## Digit Symbol
-  if ("cog_digsym" %in% colnames(out)) {
-    out <- out |>
-      dplyr::rename(
-        raw_cog_digsym = .data$cog_digsym
-      ) |>
-      dplyr::mutate(
-        digsym_age_groups = c("XXXX", "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF")[
-          findInterval(.data$cog_age, c(0, 45, 55, 65, 70, 75, 80, Inf))
-        ],
-        ss_cog_digsym = standardized_cog_digsym(.data$raw_cog_digsym, .data$digsym_age_groups)
-      )
-  }
-
-  ## RAVLT
-  if ("cog_ravlt_a1" %in% colnames(out)) {
-    out <- out |>
-      dplyr::rename(
-        raw_cog_ravlt_recog_acc = .data$cog_ravlt_recog_acc
-      ) |>
-      dplyr::mutate(
-        ravlt_age_groups = findInterval(.data$cog_age, c(16, 20, 30, 40, 50, 60, 70, 80)),
-        ravlt_recog_age_groups = c("XXXXX",
-                                   "AAAAA",
-                                   "BBBBB",
-                                   "CCCCC",
-                                   "DDDDD",
-                                   "EEEEE",
-                                   "FFFFF",
-                                   "GGGGG",
-                                   "HHHHH",
-                                   "IIIII",
-                                   "JJJJJ")[findInterval(.data$cog_age, c(0,60,63,66,69,72,75,78,81,84,87,Inf))],
-        ss_cog_ravlt_recog_acc = standardized_cog_ravlt_recog_acc(
-          .data$raw_cog_ravlt_recog_acc,
-          .data$ravlt_recog_age_groups,
-          sex = dplyr::case_match(.data$cog_sex, "Male" ~ "m", "Female" ~ "f", .default = NA)
+        dplyr::across(
+          .cols = tidyselect::any_of(names(for_zscores)),
+          .fns = \(x) {
+            standardize_to_z_scores(
+              x,
+              dplyr::cur_column(),
+              age = .data$cog_age,
+              sex = dplyr::case_match(.data$cog_sex, "Male" ~ "m", "Female" ~ "f", .default = NA),
+              education = .data$cog_education
+            )
+          },
+          .names = "standardized_{.col}"
         )
       )
 
-    ravlt_trials <- out |>
-      dplyr::select(
-        .data$cog_studyid,
-        .data$cog_test_date,
-        .data$ravlt_age_groups,
-        tidyselect::any_of(unique(ravlt_trials_m_sd$name))
-      ) |>
-      tidyr::pivot_longer(
-        tidyselect::any_of(unique(ravlt_trials_m_sd$name)),
-        names_to = "name",
-        values_to = "raw"
-      ) |>
-      dplyr::left_join(
-        ravlt_trials_m_sd
-      ) |>
-      dplyr::mutate(
-        standardized = (.data$raw - .data$m) / .data$sd
-      ) |>
-      dplyr::select(
-        -.data$m, -.data$sd
-      ) |>
-      tidyr::pivot_wider(
-        names_from = .data$name,
-        values_from = c(.data$raw, .data$standardized)
-      ) |>
-      dplyr::filter(
-        dplyr::if_any(
-          tidyselect::everything(), \(x) length(x) > 1
-        )
-      )
+    ## Add prefix "raw" to variable names
+    wh <- which(colnames(out) %in% names(for_zscores))
+    colnames(out)[wh] <- paste("raw", colnames(out)[wh], sep = "_")
+  }
 
-    out <- dplyr::left_join(
-      out |> dplyr::select(-tidyselect::any_of(unique(ravlt_trials_m_sd$name))),
-      ravlt_trials
+  ## If 'cog_ravlt_recog_acc' in data, get SS for this var
+  if (any("cog_ravlt_recog_acc" == colnames(dat))) {
+    out$ss_cog_ravlt_recog_acc <- standardized_ravlt_recog_acc(
+      raw_score = dat$cog_ravlt_recog_acc,
+      age = dat$cog_age,
+      sex = dplyr::case_match(dat$cog_sex, "Male" ~ "m", "Female" ~ "f", .default = NA)
     )
 
+    ## Add prefix "raw" to variable name
+    colnames(out)[colnames(out) == "cog_ravlt_recog_acc"] <- "raw_cog_ravlt_recog_acc"
+  }
+
+  ## If 'cog_digsym' in data, get SS for this var
+  if (any("cog_digsym" == colnames(dat))) {
+    out$ss_cog_digsym <- standardized_digsym(
+      raw_score = out$cog_digsym,
+      age = out$cog_age
+    )
+
+    ## Add prefix "raw" to variable name
+    colnames(out)[colnames(out) == "cog_digsym"] <- "raw_cog_digsym"
+  }
+
+  if (any("cog_flc_flu" == colnames(dat))) {
+    out$ss_cog_flc_flu <- standardized_flc_flu(out$cog_flc_flu, out$cog_age)
+
+    ## Add prefix "raw" to variable name
+    colnames(out)[colnames(out) == "cog_flc_flu"] <- "raw_cog_flc_flu"
   }
 
   out
-
 }
+

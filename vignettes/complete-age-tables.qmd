@@ -1,0 +1,127 @@
+---
+title: "Complete Age Tables"
+format:
+  html:
+    toc: true
+    toc-location: right
+    html-math-method: mathjax
+execute: 
+  echo: false
+  warning: false
+  message: false
+vignette: >
+  %\VignetteIndexEntry{Complete Age Tables}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+# Introduction
+
+We give tables with age ranges for all age groups for reference. Note: for all ages from 0 to 110.
+
+```{r}
+library(tidyverse)
+library(wlsRedcapApp)
+```
+
+# Age Group Tables
+
+```{r}
+#| label: tbl-UDS-battery-age-groups
+#| tbl-cap: "UDS Battery Age Groups"
+
+tibble(
+  Age = 0:110,
+  `UDS Battery Age Group` = get_age_group(Age, "UDS_battery")
+) |> 
+  summarize(
+    .by = 'UDS Battery Age Group',
+    `Start Age` = min(Age),
+    `End Age` = max(Age)
+  ) |> 
+  gt::gt()
+```
+
+```{r}
+#| label: tbl-ravlt-trials-age-groups
+#| tbl-cap: "Rey AVLT Trials Age Groups"
+tibble(
+  Age = 0:110,
+  `Rey AVLT Trials Age Group` = get_age_group(Age, "ravlt_trials")
+) |> 
+  summarize(
+    .by = -Age,
+    `Start Age` = min(Age),
+    `End Age` = max(Age)
+  ) |> 
+  gt::gt()
+```
+
+```{r}
+#| label: tbl-ravlt-recog-age-groups
+#| tbl-cap: "Rey AVLT Recognition Age Groups"
+tibble(
+  Age = 0:110,
+  `Rey AVLT Recognition Age Group` = get_age_group(Age, "ravlt_recog")
+) |> 
+  summarize(
+    .by = -Age,
+    `Start Age` = min(Age),
+    `End Age` = max(Age)
+  ) |> 
+  gt::gt()
+```
+
+```{r}
+#| label: tbl-otmt-age-groups
+#| tbl-cap: "Oral Trail Making Tests Age Groups"
+tibble(
+  Age = 0:110,
+  `OTMT Age Group` = get_age_group(Age, "otmt")
+) |> 
+  summarize(
+    .by = -Age,
+    `Start Age` = min(Age),
+    `End Age` = max(Age)
+  ) |> 
+  gt::gt()
+```
+
+```{r}
+#| label: tbl-cowat-age-groups
+#| tbl-cap: "COWAT Age Groups"
+tibble(
+  Age = 0:110,
+  `COWAT Age Group` = get_age_group(Age, "cowat")
+) |> 
+  mutate(
+    old = Age > 90
+  ) |> 
+  summarize(
+    .by = c(`COWAT Age Group`, old),
+    `Start Age` = min(Age),
+    `End Age` = max(Age)
+  ) |> 
+  select(-old) |> 
+  gt::gt()
+```
+
+```{r}
+#| label: tbl-digsym-age-groups
+#| tbl-cap: "WAIS-R Digit Symbol Age Groups"
+tibble(
+  Age = 0:110,
+  `WAIS-R Digit Symbol Age Group` = get_age_group(Age, "digsym")
+) |> 
+  mutate(
+    old = Age > 90
+  ) |> 
+  summarize(
+    .by = c(`WAIS-R Digit Symbol Age Group`, old),
+    `Start Age` = min(Age),
+    `End Age` = max(Age)
+  ) |> 
+  select(-old) |> 
+  gt::gt()
+```
