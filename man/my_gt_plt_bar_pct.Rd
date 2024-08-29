@@ -16,8 +16,7 @@ my_gt_plt_bar_pct(
   label_cutoff = 0.4,
   decimals = 1,
   font_style = "bold",
-  font_size = "10px",
-  missing_text = "---"
+  font_size = "10px"
 )
 }
 \arguments{
@@ -44,8 +43,6 @@ my_gt_plt_bar_pct(
 \item{font_style}{A character representing the font style of the labels. Accepts one of 'bold' (default), 'italic', or 'normal'.}
 
 \item{font_size}{A character representing the font size of the labels. Defaults to '10px'.}
-
-\item{missing_text}{Text to display for labels when cell is \code{NA}. Default '---'}
 }
 \description{
 This updates the \code{gtExtras::gt_plt_bar_pct} to handle missing values as
