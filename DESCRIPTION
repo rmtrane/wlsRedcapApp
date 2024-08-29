@@ -28,7 +28,6 @@ Imports:
     here,
     lubridate,
     methods,
-    purrr,
     readr,
     REDCapR,
     rlang,
@@ -43,7 +42,8 @@ Imports:
 Suggests: 
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    quarto
 Config/testthat/edition: 3
 URL: https://rmtrane.github.io/wlsRedcapApp/
-VignetteBuilder: knitr
+VignetteBuilder: quarto

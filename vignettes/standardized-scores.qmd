@@ -26,7 +26,8 @@ Below, we include more details on how the standardized scores are calculated for
 #| warning: false
 #| message: false
 library(wlsRedcapApp, quietly = T)
-library(tidyverse, quietly = T)
+library(dplyr, quietly = T)
+library(tidyr, quietly = T)
 ```
 
 

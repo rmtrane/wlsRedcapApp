@@ -4,7 +4,6 @@
 #' desired.
 #'
 #' @inheritParams gtExtras::gt_plt_bar_pct
-#' @param missing_text Text to display for labels when cell is `NA`. Default '---'
 #'
 #' @keywords internal
 
@@ -20,8 +19,7 @@ my_gt_plt_bar_pct <- function(
     label_cutoff = 0.4,
     decimals = 1,
     font_style = "bold",
-    font_size = "10px",
-    missing_text = "---") {
+    font_size = "10px") {
 
   stopifnot(
     `'gt_object' must be a 'gt_tbl', have you accidentally passed raw data?` =
@@ -78,12 +76,12 @@ my_gt_plt_bar_pct <- function(
               "background:", fill,
               ";", "width:", scaled_value, "%;", "height:",
               height, "px;", "display:flex;", "align-items:center;",
-              "justify-content:center;", "color:", gtExtras:::ideal_fgnd_color(background),
+              "justify-content:center;", "color:", ideal_fgnd_color(background),
               ";", "font-weight:", font_style, ";", "font-size:",
               font_size, ";", "position:relative;"
             )
             span_styles <- paste0(
-              "color:", gtExtras:::ideal_fgnd_color(background),
+              "color:", ideal_fgnd_color(background),
               ";", "position:absolute;", "left:0%;", "margin-left:",
               scaled_value * width / 100, "px;", "font-weight:",
               font_style, ";", "font-size:", font_size,
@@ -98,7 +96,7 @@ my_gt_plt_bar_pct <- function(
               "justify-content:flex-start;", "position:relative;"
             )
             span_styles <- paste0(
-              "color:", gtExtras:::ideal_fgnd_color(fill),
+              "color:", ideal_fgnd_color(fill),
               ";", "position:absolute;", "left:0px;",
               "margin-left:5px;", "font-weight:", font_style,
               ";", "font-size:", font_size, ";"
@@ -114,7 +112,7 @@ my_gt_plt_bar_pct <- function(
 
     chart <- lapply(bar, function(bar) {
       if (is.na(bar)) {
-        gt:::context_missing_text(missing_text = missing_text, context = "html")
+        "&mdash;"
       } else {
         glue::glue("<div style='flex-grow:1;margin-left:8px;background:{background};'>{bar}</div>")
       }
@@ -135,7 +133,7 @@ my_gt_plt_bar_pct <- function(
       gt::cols_width(col_to_widen) |>
       gt::text_transform(
         locations = gt::cells_body(columns = {{ column }}),
-        fn = bar_plt_html # quiet(bar_plt_html)
+        fn = bar_plt_html
       ) |>
       gt::cols_align(
         align = "left",
