@@ -4,6 +4,7 @@ Ralph Møller Trane
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/rmtrane/wlsRedcapApp/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rmtrane/wlsRedcapApp/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/rmtrane/wlsRedcapApp/graph/badge.svg)](https://app.codecov.io/gh/rmtrane/wlsRedcapApp)
 <!-- badges: end -->
 
 For full documentation, see https://rmtrane.github.io/wlsRedcapApp.
