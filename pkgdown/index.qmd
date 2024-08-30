@@ -4,11 +4,10 @@ author: "Ralph Møller Trane"
 format: gfm
 ---
 
-This R package provides functions to work with outcomes from the NACC T-Cog Neuropsychological Assessment. The main purpose is the creation of a summary table used when dementia diagnoses are decided on through consensus (see table below^[Note that Percentile numbers are rendered weird on this front page. For more accurate representation of the table, see the `main_table()` reference page])
+This R package provides functions to work with outcomes from the NACC T-Cog Neuropsychological Assessment. The main purpose is the creation of a summary table used when dementia diagnoses are decided on through consensus (see table below^[Note that Percentile numbers are rendered weird on this front page. For more accurate representation of the table, see the `main_table()` reference page]). 
 
 ```{r}
 #| eval: false
-
 library(wlsRedcapApp)
 
 main_table(
@@ -19,7 +18,7 @@ main_table(
 ```
 
 ```{r}
-#| include: false
+#| echo: false
 library(wlsRedcapApp)
 
 home_page_table <- main_table(
@@ -28,13 +27,8 @@ home_page_table <- main_table(
   cur_date = "8/9/2021"
 )
 
-gt::gtsave(home_page_table, filename = here::here("man/figures/home_page_table.png"))
+gt::as_raw_html(home_page_table)
 ```
-![](man/figures/home_page_table.png)
-
-<!-- <div align="center"> -->
-<!-- <img src="man/figures/home_page_table.png"> -->
-<!-- </div> -->
 
 ## Get Started
 
