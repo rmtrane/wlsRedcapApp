@@ -16,6 +16,12 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/complete-age-tables.html">Complete Age Tables</a></li>
+    <li><a class="dropdown-item" href="../articles/ranges-for-standardizing-to-standardized-scores.html">Ranges for Standardizing to Standardized Scores</a></li>
+    <li><a class="dropdown-item" href="../articles/standardized-scores.html">Standardized Scores</a></li>
+  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
       </ul></div>
@@ -54,6 +60,12 @@
         <dd>Summary Table with Demographic Information</dd>
       </dl><dl><dt>
 
+          <code><a href="get_age_group.html">get_age_group()</a></code>
+
+        </dt>
+        <dd>Get Age Group for Standardized Scores</dd>
+      </dl><dl><dt>
+
           <code><a href="functional_measures_table.html">functional_measures_table()</a></code>
 
         </dt>
@@ -78,22 +90,28 @@
         <dd>Prepare data from REDCap</dd>
       </dl><dl><dt>
 
-          <code><a href="standardized_cog_digsym.html">standardized_cog_digsym()</a></code>
+          <code><a href="standardized_digsym.html">standardized_digsym()</a></code>
 
         </dt>
         <dd>Get standardized WAIS-R Digit Symbol score</dd>
       </dl><dl><dt>
 
-          <code><a href="standardized_cog_flc_flu.html">standardized_cog_flc_flu()</a></code>
+          <code><a href="standardized_flc_flu.html">standardized_flc_flu()</a></code>
 
         </dt>
         <dd>Get standardized F+L+C Words score</dd>
       </dl><dl><dt>
 
-          <code><a href="standardized_cog_ravlt_recog_acc.html">standardized_cog_ravlt_recog_acc()</a></code>
+          <code><a href="standardized_ravlt_recog_acc.html">standardized_ravlt_recog_acc()</a></code>
 
         </dt>
         <dd>Get standardized RAVLT Recognition Accuracy score</dd>
+      </dl><dl><dt>
+
+          <code><a href="standardize_to_z_scores.html">standardize_to_z_scores()</a></code>
+
+        </dt>
+        <dd>Standardize Raw Cognitive Scores to Z-Scores</dd>
       </dl><dl><dt>
 
           <code><a href="var_labels.html">var_labels()</a></code>
@@ -172,22 +190,16 @@
         <dd>Demo Data Set</dd>
       </dl><dl><dt>
 
-          <code><a href="dig_symb_ranges.html">dig_symb_ranges</a></code>
+          <code><a href="demo_raw_data.html">demo_raw_data</a></code>
+
+        </dt>
+        <dd>Demo Raw Data Set</dd>
+      </dl><dl><dt>
+
+          <code><a href="digsym_ranges.html">digsym_ranges</a></code>
 
         </dt>
         <dd>WAIS-R Digit Symbols ranges</dd>
-      </dl><dl><dt>
-
-          <code><a href="male_female.html">male_female</a></code>
-
-        </dt>
-        <dd>Various Cognition Measures: means and standard deviations</dd>
-      </dl><dl><dt>
-
-          <code><a href="otmt.html">otmt</a></code>
-
-        </dt>
-        <dd>Oral Trail Making Test: means and standard deviations</dd>
       </dl><dl><dt>
 
           <code><a href="ravlt_recog_ranges.html">ravlt_recog_ranges</a></code>
@@ -196,17 +208,23 @@
         <dd>RAVLT Recognition ranges</dd>
       </dl><dl><dt>
 
-          <code><a href="ravlt_trials_m_sd.html">ravlt_trials_m_sd</a></code>
+          <code><a href="for_zscores.html">for_zscores</a></code>
 
         </dt>
-        <dd>RAVLT Means and SDs</dd>
+        <dd>Means and SDs for calculating z-scores</dd>
+      </dl><dl><dt>
+
+          <code><a href="cog_vars_labels.html">cog_vars_labels</a></code>
+
+        </dt>
+        <dd>Labels for Cognitive Variables</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ralph Møller Trane.</p>
+  <p>Developed by Ralph Møller Trane, Victoria Williams.</p>
 </div>
 
 <div class="pkgdown-footer-right">

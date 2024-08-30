@@ -1,8 +1,11 @@
 pandoc: 3.1.11
 pkgdown: 2.1.0
 pkgdown_sha: ~
-articles: {}
-last_built: 2024-08-23T19:04Z
+articles:
+  complete-age-tables: complete-age-tables.html
+  ranges-for-standardizing-to-standardized-scores: ranges-for-standardizing-to-standardized-scores.html
+  standardized-scores: standardized-scores.html
+last_built: 2024-08-30T20:09Z
 urls:
   reference: https://rmtrane.github.io/wlsRedcapApp/reference
   article: https://rmtrane.github.io/wlsRedcapApp/articles
