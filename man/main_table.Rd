@@ -4,16 +4,10 @@
 \alias{main_table}
 \title{Create NACC T-Cog Neuropsychological Assessment Summary Table}
 \usage{
-main_table(dat, studyid = "102038g", cur_date = "2022-06-13", bar_height = 16)
+main_table(dat, bar_height = 16)
 }
 \arguments{
-\item{dat}{Data to use}
-
-\item{studyid}{String with ID of a participant. Must be length 1 and present in
-\code{dat$cog_studyid}}
-
-\item{cur_date}{String with visit date to use. Must be present in
-\code{dplyr::filter(dat, cog_studyid == studyid)$cog_test_date}.}
+\item{dat}{Data to use. Must have exactly one row (data from one participant and one visit).}
 
 \item{bar_height}{In pixels. Height of the percentile bars. Default: 16}
 }
@@ -26,9 +20,7 @@ Assessment.
 }
 \examples{
 main_table(
-  dat = demo_data,
-  studyid = demo_data$cog_studyid[1],
-  cur_date = demo_data$cog_test_date[1]
+  dat = demo_data[1,]
 )
 
 }
