@@ -3,45 +3,147 @@
 #' This function create a summary table of measures from the NACC T-Cog Neuropsychological
 #' Assessment.
 #'
-#' @param dat Data to use
-#' @param studyid String with ID of a participant. Must be length 1 and present in
-#' `dat$cog_studyid`
-#' @param cur_date String with visit date to use. Must be present in
-#' `dplyr::filter(dat, cog_studyid == studyid)$cog_test_date`.
+#' @param dat Data to use. Must have exactly one row (data from one participant and one visit).
 #' @param bar_height In pixels. Height of the percentile bars. Default: 16
 #'
 #' @returns An object of class `gt::gt_tbl`
 #'
 #' @examples
 #' main_table(
-#'   dat = demo_data,
-#'   studyid = demo_data$cog_studyid[1],
-#'   cur_date = demo_data$cog_test_date[1]
+#'   dat = demo_data[1,]
 #' )
 #'
 #' @export
 main_table <- function(
     dat,
-    studyid = "102038g",
-    cur_date = "2022-06-13",
     bar_height = 16
 ) {
 
-  cur_pt_dat <- dat |>
-    dplyr::filter(
-      .data$cog_studyid == studyid,
-      .data$cog_test_date == cur_date
-    )
+  stopifnot("Data provided must have exactly one row" = nrow(dat) == 1)
 
-  if (nrow(cur_pt_dat) > 1) {
-    warning("More than one row in data")
-    stop()
-  }
+  stopifnot(
+    "Data must contain a column labelled 'cog_studyid' giving unique IDs for participants" =
+      "cog_studyid" %in% colnames(dat)
+  )
+
+  pot_cog_cols <- c(
+    "cog_studyid",
+    "cog_cdr_sob",
+    "cog_tmta_err",
+    "cog_tmta_lines",
+    "cog_benson_delay",
+    "cog_benson_recog",
+    "cog_ravlt_a1",
+    "cog_ravlt_a2",
+    "cog_ravlt_a3",
+    "cog_ravlt_a4",
+    "cog_ravlt_a5",
+    "cog_ravlt_recog_tp",
+    "cog_ravlt_recog_tn",
+    "cog_tmtb_err",
+    "cog_tmtb_lines",
+    "cog_cdr_global",
+    "cog_moca",
+    "cog_moca_blind",
+    "cog_ticsm",
+    "cog_tmta_time",
+    "cog_otmta_time",
+    "cog_otmta_error",
+    "cog_nsf_total",
+    "cog_nsf_span",
+    "cog_nsb_total",
+    "cog_nsb_span",
+    "cog_digsym",
+    "cog_mint_tot",
+    "cog_animal_flu",
+    "cog_veg_flu",
+    "cog_fl_flu",
+    "cog_flc_flu",
+    "cog_f_flu",
+    "cog_l_flu",
+    "cog_benson_copy",
+    "cog_benson_delay",
+    "cog_craft_imm_ver",
+    "cog_craft_imm_par",
+    "cog_craft_delay_verb",
+    "cog_craft_delay_par",
+    "cog_ravlt_a1_a5_total",
+    "cog_ravlt_b1",
+    "cog_ravlt_a6",
+    "cog_ravlt_a7",
+    "cog_ravlt_recog_acc",
+    "cog_tmtb_time",
+    "cog_otmtb_time",
+    "cog_otmtb_error",
+    "cog_moca_clock",
+    "cog_gds15"
+  )
+
+  col_avails <- colnames(dat)
+
+  if (! any(c(pot_cog_cols, paste("raw", pot_cog_cols, sep = "_"), paste("standardized", pot_cog_cols, sep = "_"), paste("ss", pot_cog_cols, sep = "_")) %in% col_avails))
+    stop("No columns recognized as cognitive scores.")
+
+
 
   ## Create labels to be used. First, if any of the necessary variables are
   ## missing, set to NA
+  vars_needed <- c(
+    "cog_cdr_sob",
+    "cog_tmta_err",
+    "cog_tmta_lines",
+    "raw_cog_benson_delay",
+    "cog_benson_recog",
+    "cog_ravlt_a1",
+    "cog_ravlt_a2",
+    "cog_ravlt_a3",
+    "cog_ravlt_a4",
+    "cog_ravlt_a5",
+    "cog_ravlt_recog_tp",
+    "cog_ravlt_recog_tn",
+    "cog_tmtb_err",
+    "cog_tmtb_lines",
+    "cog_cdr_global",
+    "cog_moca",
+    "cog_moca_blind",
+    "cog_ticsm",
+    "cog_tmta_time",
+    "cog_otmta_time",
+    "cog_otmta_error",
+    "cog_nsf_total",
+    "cog_nsf_span",
+    "cog_nsb_total",
+    "cog_nsb_span",
+    "cog_digsym",
+    "cog_mint_tot",
+    "cog_animal_flu",
+    "cog_veg_flu",
+    "cog_fl_flu",
+    "cog_flc_flu",
+    "cog_f_flu",
+    "cog_l_flu",
+    "cog_benson_copy",
+    "cog_benson_delay",
+    "cog_craft_imm_ver",
+    "cog_craft_imm_par",
+    "cog_craft_delay_verb",
+    "cog_craft_delay_par",
+    "cog_ravlt_a1_a5_total",
+    "cog_ravlt_b1",
+    "cog_ravlt_a6",
+    "cog_ravlt_a7",
+    "cog_ravlt_recog_acc",
+    "cog_tmtb_time",
+    "cog_otmtb_time",
+    "cog_otmtb_error",
+    "cog_moca_clock",
+    "cog_gds15"
+  )
+
+  dat[vars_needed[!vars_needed %in% colnames(dat)]] <- NA
+
   cur_labels <- with(
-    cur_pt_dat,
+    dat,
     var_labels(
       cog_cdr_sob,
       cog_tmta_err,
@@ -60,21 +162,30 @@ main_table <- function(
     )
   )
 
-  # Check if any of the scores necessary are in cur_pt_dat, but was not
-  # adjusted/rename
-  for_main_table <- cur_pt_dat |>
+  # Check if any of the scores necessary are in dat, but was not
+  # adjusted/renamed
+  for_main_table <- dat |>
     dplyr::select(
-      # Identifiers
-      .data$cog_studyid:.data$cog_education,
+      # Identifier
+      "cog_studyid",
       # Get all scores
       tidyselect::matches(names(cur_labels))
     ) |>
-    # Rename the scores that have not been adjusted. These should be
-    # raw_(score)
+    # Rename the scores that we do not standardize.
     dplyr::rename_with(
       .fn = \(x) paste0("raw_", x),
-      .cols = tidyselect::matches(paste0("^", names(cur_labels)))
+      .cols = tidyselect::any_of(
+        c(
+          "cog_cdr_global",
+          "cog_moca_blind",
+          "cog_moca_clock",
+          "cog_ticsm",
+          "cog_gds15"
+        )
+      )
     ) |>
+    ## Create long data set with one row per variable, and up to three columns
+    ## per variable: raw, standardized, and ss.
     tidyr::pivot_longer(
       cols = c(
         tidyselect::starts_with("raw_"),
@@ -130,7 +241,7 @@ main_table <- function(
       # Create row labels
       labels = stringr::str_replace_all(.data$name, cur_labels) |>
         factor(levels = unname(cur_labels)),
-      .after = .data$name
+      .after = "name"
     ) |>
     # Remove rows with no raw observations
     dplyr::filter(!is.na(.data$Raw)) |>
@@ -171,16 +282,16 @@ main_table <- function(
       Percentile = .data$Percentile*100
     ) |>
     dplyr::select(
-      .data$group,
-      .data$labels,
-      .data$name,
-      .data$Raw,
-      .data$`z-score`,
-      .data$SS,
-      .data$Percentile,
-      .data$Description
+      "group",
+      "labels",
+      "name",
+      "Raw",
+      "z-score",
+      "SS",
+      "Percentile",
+      "Description"
     ) |>
-    dplyr::arrange(.data$labels)
+    dplyr::arrange("labels")
 
   for_main_table |>
     gt::gt(
@@ -205,7 +316,8 @@ main_table <- function(
       columns = c("z-score", "SS")
     ) |>
     my_gt_plt_bar_pct(
-      .data$Percentile,
+      #.data$Percentile,
+      "Percentile",
       scaled = T,
       labels = T,
       height = bar_height
@@ -218,7 +330,7 @@ main_table <- function(
     gt::tab_style(
       style = gt::cell_text(align = 'center'),
       locations = gt::cells_body(
-        columns = .data$Percentile
+        columns = "Percentile"
       )
     ) |>
     gt::tab_style(

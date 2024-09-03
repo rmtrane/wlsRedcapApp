@@ -11,9 +11,7 @@ This R package provides functions to work with outcomes from the NACC T-Cog Neur
 library(wlsRedcapApp)
 
 main_table(
-  demo_data, 
-  studyid = "326231g", 
-  cur_date = "8/9/2021"
+  demo_data[1,]
 )
 ```
 
@@ -22,9 +20,7 @@ main_table(
 library(wlsRedcapApp)
 
 home_page_table <- main_table(
-  demo_data, 
-  studyid = "326231g", 
-  cur_date = "8/9/2021"
+  demo_data[1,]
 )
 
 gt::as_raw_html(home_page_table)
@@ -50,5 +46,4 @@ wlsRedcapApp()
 ```
 
 This package includes a demo data set (`demo_data`), which allows you to explore the functionality of the package and in particular the Shiny app. Not that these data might seem completely made up... because they are. Visits might be out of order (as in, later visits have dates earlier than first visits), and outcomes might seem contradictory. These data were created by scrambling actual PHI data, and the sole purpose is testing and showcasing this R package. If you have access to the WLS REDCap project, you can download the full data from REDCap and choose to use these data in the Shiny app. Simply follow the instructions in the app. 
-
 

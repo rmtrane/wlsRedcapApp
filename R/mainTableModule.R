@@ -21,9 +21,7 @@ mainTableServer <- function(id, dat, studyid, date, table_font_size = 100) {
 
     output$mainTable <- gt::render_gt({
       main_table(
-        dat = dat(),
-        studyid = studyid,
-        cur_date = date,
+        dat = dplyr::filter(dat(), .data$cog_studyid == studyid, .data$cog_test_date == date),
         bar_height = 16*table_font_size/100
       ) |>
         gt::cols_width(
