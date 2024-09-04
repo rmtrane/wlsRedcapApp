@@ -158,7 +158,9 @@ main_table <- function(
       cog_ravlt_recog_tp,
       cog_ravlt_recog_tn,
       cog_tmtb_err,
-      cog_tmtb_lines
+      cog_tmtb_lines,
+      cog_craft_verb_retain = floor(raw_cog_craft_delay_verb / raw_cog_craft_imm_ver * 100),
+      cog_craft_par_retain = floor(raw_cog_craft_delay_par / raw_cog_craft_imm_par * 100)
     )
   )
 
@@ -250,13 +252,14 @@ main_table <- function(
       Percentile = dplyr::case_when(
         # For time and number of errors, we want right-tailed probabilities
         .data$name %in% c("cog_tmta_time", "cog_tmtb_time",
-                    "cog_otmta_time", "cog_otmtb_time",
-                    "cog_otmta_error", "cog_otmtb_error") ~ 1 - pnorm(.data$`z-score`),
+                          "cog_otmta_time", "cog_otmtb_time",
+                          "cog_otmta_error", "cog_otmtb_error") ~
+          1 - pnorm(.data$`z-score`),
         # For other standardized scores, left tailed probabilities:
-        .data$name %in% names(for_zscores) #c(unique(male_female$name), unique(ravlt_trials_m_sd$name))
-          ~ pnorm(.data$`z-score`),
-        # Special cases go here, such as all RAVLT
-        .data$name %in% c("cog_flc_flu", "cog_digsym", "cog_ravlt_recog_acc") ~ c(1,1,1,1,2,5,9,16,25,37,50,63,75,84,91,95,98,99,99,99)[pmax(1, .data$SS+1)]/100,
+        .data$name %in% names(for_zscores) ~ pnorm(.data$`z-score`),
+        # Percentiles from SS
+        .data$name %in% c("cog_flc_flu", "cog_digsym", "cog_ravlt_recog_acc") ~
+          c(1,1,1,1,2,5,9,16,25,37,50,63,75,84,91,95,98,99,99,99)[pmax(1, .data$SS+1)]/100,
         .default = NA
       ),
       # Get description. Again, this is done differently for different variables.
@@ -277,15 +280,53 @@ main_table <- function(
                      "Superior")[findInterval(.data$Percentile,
                                               c(0, 0.03, 0.10, 0.25, 0.76, 0.92, Inf))]
       )
-    ) |>
+    )
+
+  widest_raw_value <- max(nchar(for_main_table$Raw))
+
+  for_main_table <- for_main_table |>
     dplyr::mutate(
-      Percentile = .data$Percentile*100
+      Percentile = .data$Percentile*100,
+      Raw = dplyr::if_else(name == "cog_cdr_global", sprintf("%.1f", Raw), as.character(Raw)),
+      # Raw = stringr::str_pad(Raw, width = widest_raw_value, side = "left"),
+      # Raw = dplyr::case_match(
+      #   name,
+      #   "cog_moca_blind" ~ paste(Raw, "22&nbsp;", sep = "/"),
+      #   "cog_ticsm" ~ paste(Raw, "50&nbsp;", sep = "/"),
+      #   c("cog_otmta_time", "cog_otmtb_time") ~ paste(Raw, "sec"),
+      #   c("cog_nsf_total", "cog_nsb_total") ~ paste(Raw, "14&nbsp;", sep = "/"),
+      #   "cog_nsf_span" ~ paste(Raw, "9&nbsp;&nbsp;", sep = "/"),
+      #   "cog_nsb_span" ~ paste(Raw, "8&nbsp;&nbsp;", sep = "/"),
+      #   c("cog_craft_imm_ver", "cog_craft_delay_ver") ~ paste(Raw, "44&nbsp;&nbsp;", sep = "/"),
+      #   c("cog_craft_imm_par", "cog_craft_delay_par") ~ paste(Raw, "25&nbsp;&nbsp;", sep = "/"),
+      #   "cog_gds15" ~ paste(Raw, "15&nbsp;", sep = "/"),
+      #   .default = paste(Raw, "&nbsp;&nbsp;&nbsp;&nbsp;")
+      # )
+      Raw_suffix = dplyr::case_match(
+        name,
+        "cog_moca" ~ "/30",
+        "cog_moca_blind" ~ "/22",
+        "cog_ticsm" ~ "/50",
+        c("cog_tmta_time", "cog_tmtb_time", "cog_otmta_time", "cog_otmtb_time", "cog_moca_clock") ~ "&nbspsec",
+        c("cog_nsf_total", "cog_nsb_total") ~ "/14",
+        "cog_nsf_span" ~ "/9",
+        "cog_nsb_span" ~ "/8",
+        "cog_mint_tot" ~ "/32",
+        "cog_benson_copy" ~ "/16",
+        "cog_benson_delay" ~ "/16",
+        c("cog_craft_imm_ver", "cog_craft_delay_verb") ~ "/44",
+        c("cog_craft_imm_par", "cog_craft_delay_par") ~ "/25",
+        "cog_ravlt_a1_a5_total" ~ "/75",
+        c("cog_ravlt_b1", "cog_ravlt_a6", "cog_ravlt_a7", "cog_gds15") ~ "/15",
+        .default = ""
+      )
     ) |>
     dplyr::select(
       "group",
       "labels",
       "name",
       "Raw",
+      "Raw_suffix",
       "z-score",
       "SS",
       "Percentile",
@@ -298,14 +339,15 @@ main_table <- function(
       rowname_col = "labels",
       groupname_col = "group"
     ) |>
-    gt::cols_hide(.data$name) |>
-    gt::fmt_number(
-      columns = .data$`z-score`
+    gt::cols_hide("name") |>
+    ## Make parts of the table bold
+    gt::tab_options(
+      table.font.names = "Arial",
+      column_labels.font.weight = "bold",
+      row_group.font.weight = "bold"
     ) |>
     gt::fmt_number(
-      columns = .data$Raw,
-      rows = !stringr::str_detect(.data$labels, "CDR Global"),
-      decimals = 0
+      columns = "z-score"
     ) |>
     gt::tab_stub_indent(
       rows = tidyselect::everything(),
@@ -322,17 +364,56 @@ main_table <- function(
       labels = T,
       height = bar_height
     ) |>
+    # gt::tab_options(
+    #   table.font.names = "Arial"
+    # ) |>
     gt::sub_missing() |>
     gt::cols_align(
       align = "left",
-      columns = .data$labels
+      columns = c("labels", "Raw_suffix")
+    ) |>
+    gt::cols_align(
+      align = "right",
+      columns = "Raw"
+    ) |>
+    gt::cols_align(
+      align = "center",
+      columns = "Percentile"
+    ) |>
+    ## Make Raw and Raw_suffix look pretty
+    gt::cols_label(
+      "Raw" = "Ra",
+      "Raw_suffix" = "w"
     ) |>
     gt::tab_style(
-      style = gt::cell_text(align = 'center'),
+      style = "padding-right:0px; padding-left:0px;",
+      locations = gt::cells_column_labels(tidyselect::starts_with("Raw"))
+    ) |>
+    gt::tab_style(
+      style = "padding-right:0px;",
       locations = gt::cells_body(
-        columns = "Percentile"
+        columns = "Raw"
       )
     ) |>
+    gt::tab_style(
+      style = glue::glue("padding-left:0px; color: {rgb(0, 0, 0, 0.3)};"),
+      locations = gt::cells_body(
+        columns = "Raw_suffix",
+        rows = Raw_suffix != "&nbspsec"
+      )
+    ) |>
+    gt::tab_style(
+      style = "padding-left:0px;",
+      locations = gt::cells_body(
+        columns = "Raw_suffix",
+        rows = Raw_suffix == "&nbspsec"
+      )
+    ) |>
+    gt::fmt(
+      columns = "Raw_suffix",
+      fns = gt::md
+    ) |>
+    ## Style description column
     gt::tab_style(
       style = gt::cell_fill("red"),
       locations = gt::cells_body(
@@ -374,10 +455,6 @@ main_table <- function(
         columns = .data$Description,
         rows = .data$Description == "Superior"
       )
-    ) |>
-    gt::tab_options(
-      column_labels.font.weight = "bold",
-      row_group.font.weight = "bold"
     )
 }
 

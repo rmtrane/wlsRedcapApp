@@ -37,7 +37,8 @@ dataPrepServer <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
 
     placeholder_text <- dplyr::if_else(
-      file.exists(here::here("data-raw/.encrypted-api-token-passwd")),
+      file.exists(here::here("data-raw/.encrypted-api-token-passwd")) |
+        !is.null(getOption("wlsRedcapApp_password")),
       "Local password file found.",
       "Enter Password Here"
     )
@@ -76,12 +77,22 @@ dataPrepServer <- function(id) {
 
         if (inherits(result, "try-error")) {
 
-          if (input$password == "" & file.exists(here::here("data-raw/.encrypted-api-token-passwd"))) {
-            redcap_dat(
-              prep_data(
-                decrypt_password = readr::read_file(here::here("data-raw/.encrypted-api-token-passwd"))
+          if (input$password == "") {
+            if (!is.null(getOption("wlsRedcapApp_password"))) {
+              redcap_dat(
+                prep_data(
+                  decrypt_password = getOption("wlsRedcapApp_password")
+                )
               )
-            )
+            }
+
+            if (file.exists(here::here("data-raw/.encrypted-api-token-passwd"))) {
+              redcap_dat(
+                prep_data(
+                  decrypt_password = readr::read_file(here::here("data-raw/.encrypted-api-token-passwd"))
+                )
+              )
+            }
           } else {
             shiny::showNotification(
               "Invalid Password",

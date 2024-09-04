@@ -148,7 +148,8 @@ prep_data <- function(
           "9/7/202023" ~ "9/7/2023",
           .default = .data$cog_test_date
         ),
-        cog_test_date = dplyr::if_else(is.na(.data$cog_test_date), NA, lubridate::as_date(.data$cog_test_date, format = "%m/%d/%Y"))
+        cog_test_date = dplyr::if_else(is.na(.data$cog_test_date), NA, lubridate::as_date(.data$cog_test_date, format = "%m/%d/%Y")),
+        cog_ravlt_recog_acc = if_else(cog_ravlt_recog_acc < 0 | cog_ravlt_recog_acc > 100, NA, cog_ravlt_recog_acc)
       )
   }
 

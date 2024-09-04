@@ -38,7 +38,8 @@ server <- function(input, output, session) {
         )
       })
 
-      plotCogVarServer("plot_cog_var", dat = redcap_data, studyid = input$current_studyid)
+
+      plotCogVarServer("plot_cog_var", dat = dplyr::filter(redcap_data(), .data$cog_studyid == input$current_studyid))
 
       output$demographics_table <- renderUI({
         gt::render_gt({
