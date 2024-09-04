@@ -48,7 +48,7 @@ of cognitive measures from the WLS ILIAD study.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotCogVarUI</span><span class="op">(</span><span class="va">id</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">plotCogVarServer</span><span class="op">(</span><span class="va">id</span>, <span class="va">dat</span>, <span class="va">studyid</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">plotCogVarServer</span><span class="op">(</span><span class="va">id</span>, <span class="va">dat</span>, trim <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -56,23 +56,19 @@ of cognitive measures from the WLS ILIAD study.</p>
 
 
 <dl><dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
-<dd><p>An ID string to matche module UI and module server</p></dd>
+<dd><p>An ID string to match module UI and module server</p></dd>
 
 
 <dt id="arg-dat">dat<a class="anchor" aria-label="anchor" href="#arg-dat"></a></dt>
 <dd><p>Data to use for the plots. Should contain a number of <code>cog_*</code>
 variables</p></dd>
 
-
-<dt id="arg-studyid">studyid<a class="anchor" aria-label="anchor" href="#arg-studyid"></a></dt>
-<dd><p>The study id of the participant of interest</p></dd>
-
 </dl></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="plotCogVarApp.html">plotCogVarApp</a></span><span class="op">(</span><span class="va">demo_data</span>, <span class="va">demo_data</span><span class="op">$</span><span class="va">cog_studyid</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="plotCogVarApp.html">plotCogVarApp</a></span><span class="op">(</span><span class="va">demo_data</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
