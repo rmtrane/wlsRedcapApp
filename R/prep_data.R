@@ -149,7 +149,7 @@ prep_data <- function(
           .default = .data$cog_test_date
         ),
         cog_test_date = dplyr::if_else(is.na(.data$cog_test_date), NA, lubridate::as_date(.data$cog_test_date, format = "%m/%d/%Y")),
-        cog_ravlt_recog_acc = if_else(cog_ravlt_recog_acc < 0 | cog_ravlt_recog_acc > 100, NA, cog_ravlt_recog_acc)
+        cog_ravlt_recog_acc = dplyr::if_else(.data$cog_ravlt_recog_acc < 0 | .data$cog_ravlt_recog_acc > 100, NA, .data$cog_ravlt_recog_acc)
       )
   }
 

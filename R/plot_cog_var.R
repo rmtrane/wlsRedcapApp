@@ -4,6 +4,10 @@
 #' @param var_to_plot variable to plot **without prefix**
 #' @param type Type of score to plot. One of "raw", "standardized", or "ss",
 #'   depending on `var_to_plot`
+#' @param shade_descriptions logical. Default: FALSE. If TRUE, the figure will be shaded
+#'   according to the description column of the main table.
+#' @param trim default: Inf. Value used to trim scores. Any score with
+#'   abs(score) > trim will be removed.
 #'
 #' @export
 plot_cog_var <- function(
@@ -77,19 +81,21 @@ plot_cog_var <- function(
   if (var_to_plot == "cog_cdr_global" & shade_descriptions) {
 
     for_tiles <- tibble::tibble(
-      y = seq(0, 18, by = 0.5),
-      descr = c("Normal", "Very Mild", "Mild" ,"Moderate", "Severe")[
-        findInterval(y, c(0, 2.5, 4.5, 9.5, 16, 18.5, Inf))
+      y = seq(0, 18, by = 0.5)
+    ) |>
+      dplyr::mutate(
+        descr = c("Normal", "Very Mild", "Mild" ,"Moderate", "Severe")[
+        findInterval(.data$y, c(0, 2.5, 4.5, 9.5, 16, 18.5, Inf))
       ]
     ) |>
       dplyr::summarize(
-        ymin = min(y) - 0.25,
-        ymax = max(y) + 0.25,
-        .by = descr
+        ymin = min(.data$y) - 0.25,
+        ymax = max(.data$y) + 0.25,
+        .by = .data$descr
       ) |>
       dplyr::mutate(
         fill = dplyr::case_match(
-          descr,
+          .data$descr,
           "Normal" ~ "green",
           "Very Mild" ~ "lightgreen",
           "Mild" ~ "yellow",
@@ -105,9 +111,9 @@ plot_cog_var <- function(
         ggplot2::aes(
           xmin = -Inf,
           xmax = Inf,
-          ymin = ymin,
-          ymax = ymax,
-          fill = I(fill)
+          ymin = .data$ymin,
+          ymax = .data$ymax,
+          fill = I(.data$fill)
         ),
         alpha = 0.2
       ) +
@@ -134,8 +140,6 @@ plot_cog_var <- function(
 
 
       tiles <- tibble::tibble(
-        xmin = -Inf,
-        xmax = Inf,
         ymin = c(y_min, z_scores_from_percentiles),
         ymax = c(z_scores_from_percentiles, y_max),
         fills = fills
@@ -145,11 +149,11 @@ plot_cog_var <- function(
         ggplot2::geom_rect(
           data = tiles,
           ggplot2::aes(
-            xmin = xmin,
-            xmax = xmax,
-            ymin = ymin,
-            ymax = ymax,
-            fill = I(fills)
+            xmin = -Inf,
+            xmax = Inf,
+            ymin = .data$ymin,
+            ymax = .data$ymax,
+            fill = I(.data$fills)
           ),
           alpha = 0.2,
           inherit.aes = F

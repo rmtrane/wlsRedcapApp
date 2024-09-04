@@ -7,6 +7,8 @@
 #' @param dat Data to use for the plots. Should contain a number of `cog_*`
 #'  variables
 #'
+#' @inheritParams plot_cog_var
+#'
 #' @examples
 #' \dontrun{
 #'   plotCogVarApp(demo_data[1,])
@@ -36,6 +38,9 @@ plotCogVarUI <- function(id) {
 }
 
 #' @rdname plotCogVarModule
+#'
+#' @inheritParams plot_cog_var
+#'
 #' @export
 plotCogVarServer <- function(id, dat, trim = Inf) {
 
@@ -120,13 +125,13 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
       if (input$raw_or_standard == "standardized") {
         output$shade_descriptions <- shiny::renderUI({
           shiny::checkboxInput(
-            inputId = NS(id, "shade_descriptions"),
+            inputId = shiny::NS(id, "shade_descriptions"),
             label = "Shade according to descriptions?",
             value = FALSE
           )
         })
       } else {
-        output$shade_descriptions <- renderUI(markdown(""))
+        output$shade_descriptions <- shiny::renderUI(shiny::markdown(""))
       }
     })
 
@@ -136,7 +141,7 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
     #   print(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")))
     # })
 
-    observe({
+    shiny::observe({
     #   input$raw_or_standard
     #   input$var_to_plot
     #   input$shade_descriptions
@@ -170,6 +175,8 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
 #' Shiny App Wrapping the variable plotting module
 #'
 #' @param dat Data from REDCap to use
+#'
+#' @inheritParams plot_cog_var
 #'
 #' @export
 plotCogVarApp <- function(dat, trim = Inf) {

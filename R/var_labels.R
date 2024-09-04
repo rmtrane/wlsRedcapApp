@@ -19,6 +19,8 @@
 #' @param cog_ravlt_recog_tn Rey AVLT Recognition True Negatives
 #' @param cog_tmtb_err number of errors made on Trail Making Test B
 #' @param cog_tmtb_lines lines completed on Trail Making Test B
+#' @param cog_craft_verb_retain percentage retained from cog_craft_imm_verb to cog_craft_delay_verb
+#' @param cog_craft_par_retain percentage retained from cog_craft_imm_par to cog_craft_delay_par
 #'
 #' @export
 var_labels <- function(

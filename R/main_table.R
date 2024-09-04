@@ -287,23 +287,13 @@ main_table <- function(
   for_main_table <- for_main_table |>
     dplyr::mutate(
       Percentile = .data$Percentile*100,
-      Raw = dplyr::if_else(name == "cog_cdr_global", sprintf("%.1f", Raw), as.character(Raw)),
-      # Raw = stringr::str_pad(Raw, width = widest_raw_value, side = "left"),
-      # Raw = dplyr::case_match(
-      #   name,
-      #   "cog_moca_blind" ~ paste(Raw, "22&nbsp;", sep = "/"),
-      #   "cog_ticsm" ~ paste(Raw, "50&nbsp;", sep = "/"),
-      #   c("cog_otmta_time", "cog_otmtb_time") ~ paste(Raw, "sec"),
-      #   c("cog_nsf_total", "cog_nsb_total") ~ paste(Raw, "14&nbsp;", sep = "/"),
-      #   "cog_nsf_span" ~ paste(Raw, "9&nbsp;&nbsp;", sep = "/"),
-      #   "cog_nsb_span" ~ paste(Raw, "8&nbsp;&nbsp;", sep = "/"),
-      #   c("cog_craft_imm_ver", "cog_craft_delay_ver") ~ paste(Raw, "44&nbsp;&nbsp;", sep = "/"),
-      #   c("cog_craft_imm_par", "cog_craft_delay_par") ~ paste(Raw, "25&nbsp;&nbsp;", sep = "/"),
-      #   "cog_gds15" ~ paste(Raw, "15&nbsp;", sep = "/"),
-      #   .default = paste(Raw, "&nbsp;&nbsp;&nbsp;&nbsp;")
-      # )
+      Raw = dplyr::if_else(
+        .data$name == "cog_cdr_global",
+        sprintf("%.1f", .data$Raw),
+        as.character(.data$Raw)
+      ),
       Raw_suffix = dplyr::case_match(
-        name,
+        .data$name,
         "cog_moca" ~ "/30",
         "cog_moca_blind" ~ "/22",
         "cog_ticsm" ~ "/50",
@@ -399,14 +389,14 @@ main_table <- function(
       style = glue::glue("padding-left:0px; color: {rgb(0, 0, 0, 0.3)};"),
       locations = gt::cells_body(
         columns = "Raw_suffix",
-        rows = Raw_suffix != "&nbspsec"
+        rows = .data$Raw_suffix != "&nbspsec"
       )
     ) |>
     gt::tab_style(
       style = "padding-left:0px;",
       locations = gt::cells_body(
         columns = "Raw_suffix",
-        rows = Raw_suffix == "&nbspsec"
+        rows = .data$Raw_suffix == "&nbspsec"
       )
     ) |>
     gt::fmt(
