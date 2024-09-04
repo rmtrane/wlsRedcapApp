@@ -19,6 +19,12 @@ plot_cog_var(
 
 \item{type}{Type of score to plot. One of "raw", "standardized", or "ss",
 depending on \code{var_to_plot}}
+
+\item{shade_descriptions}{logical. Default: FALSE. If TRUE, the figure will be shaded
+according to the description column of the main table.}
+
+\item{trim}{default: Inf. Value used to trim scores. Any score with
+abs(score) > trim will be removed.}
 }
 \description{
 Function to Plot Cognitive Variables over Time

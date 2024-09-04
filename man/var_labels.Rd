@@ -51,6 +51,10 @@ var_labels(
 \item{cog_tmtb_err}{number of errors made on Trail Making Test B}
 
 \item{cog_tmtb_lines}{lines completed on Trail Making Test B}
+
+\item{cog_craft_verb_retain}{percentage retained from cog_craft_imm_verb to cog_craft_delay_verb}
+
+\item{cog_craft_par_retain}{percentage retained from cog_craft_imm_par to cog_craft_delay_par}
 }
 \description{
 The main table of interest uses some of the observed data in the row labels.

@@ -8,6 +8,9 @@ plotCogVarApp(dat, trim = Inf)
 }
 \arguments{
 \item{dat}{Data from REDCap to use}
+
+\item{trim}{default: Inf. Value used to trim scores. Any score with
+abs(score) > trim will be removed.}
 }
 \description{
 Shiny App Wrapping the variable plotting module

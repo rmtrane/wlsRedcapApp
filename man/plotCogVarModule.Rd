@@ -14,6 +14,9 @@ plotCogVarServer(id, dat, trim = Inf)
 
 \item{dat}{Data to use for the plots. Should contain a number of \verb{cog_*}
 variables}
+
+\item{trim}{default: Inf. Value used to trim scores. Any score with
+abs(score) > trim will be removed.}
 }
 \description{
 This shiny module is meant for visualizing changes over time of a long list
