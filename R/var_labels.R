@@ -70,7 +70,7 @@ var_labels <- function(
     "cog_craft_imm_ver" = "Craft Immediate - Verbatim",
     "cog_craft_imm_par" = "Craft Immediate - Paraphrase",
     "cog_craft_delay_verb" = glue::glue("Craft Delay - Verbatim ({cog_craft_verb_retain}% retained)"),
-    "cog_craft_delay_par" = glue::glue("Craft Delay - Paraphrase  ({cog_craft_par_retain}% retained)"),
+    "cog_craft_delay_par" = glue::glue("Craft Delay - Paraphrase ({cog_craft_par_retain}% retained)"),
     "cog_ravlt_a1_a5_total" = glue::glue("RAVLT Total Learning ({cog_ravlt_a1},{cog_ravlt_a2},{cog_ravlt_a3},{cog_ravlt_a4},{cog_ravlt_a5})"),
     "cog_ravlt_b1" = "RAVLT Distractor List",
     "cog_ravlt_a6" = "RAVLT Short Delay",
