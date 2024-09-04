@@ -4,12 +4,10 @@
 \alias{plotCogVarApp}
 \title{Shiny App Wrapping the variable plotting module}
 \usage{
-plotCogVarApp(dat, studyid = "102038g")
+plotCogVarApp(dat, trim = Inf)
 }
 \arguments{
 \item{dat}{Data from REDCap to use}
-
-\item{studyid}{The id of the participant of interest}
 }
 \description{
 Shiny App Wrapping the variable plotting module

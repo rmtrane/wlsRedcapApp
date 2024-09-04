@@ -6,15 +6,14 @@
 \usage{
 plot_cog_var(
   dat,
-  studyid = "102038g",
   var_to_plot = "cog_flc_flu",
-  type = c("raw", "standardized", "ss")
+  type = c("raw", "standardized", "ss"),
+  shade_descriptions = F,
+  trim = Inf
 )
 }
 \arguments{
 \item{dat}{Data to use}
-
-\item{studyid}{ID of participant to plot}
 
 \item{var_to_plot}{variable to plot \strong{without prefix}}
 

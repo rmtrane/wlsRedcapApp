@@ -13,7 +13,9 @@ test_that("var_labels works", {
     cog_ravlt_recog_tp = 20,
     cog_ravlt_recog_tn = 30,
     cog_tmtb_err = 1,
-    cog_tmtb_lines = 2
+    cog_tmtb_lines = 2,
+    cog_craft_verb_retain = 2,
+    cog_craft_par_retain = 5
   )
 
   var_labels_test_results <- c(
@@ -37,11 +39,11 @@ test_that("var_labels works", {
     "cog_f_flu" = "F Words",
     "cog_l_flu" = "L Words",
     "cog_benson_copy" = "Benson Figure Copy",
-    "cog_benson_delay" = "Benson Delay (4%; Recog = 5)",
+    "cog_benson_delay" = "Benson Delay (4% retained; Recog = 5)",
     "cog_craft_imm_ver" = "Craft Immediate - Verbatim",
     "cog_craft_imm_par" = "Craft Immediate - Paraphrase",
-    "cog_craft_delay_verb" = "Craft Delay - Verbatim",
-    "cog_craft_delay_par" = "Craft Delay - Paraphrase",
+    "cog_craft_delay_verb" = "Craft Delay - Verbatim (2% retained)",
+    "cog_craft_delay_par" = "Craft Delay - Paraphrase (5% retained)",
     "cog_ravlt_a1_a5_total" = "RAVLT Total Learning (1,2,3,4,5)",
     "cog_ravlt_b1" = "RAVLT Distractor List",
     "cog_ravlt_a6" = "RAVLT Short Delay",

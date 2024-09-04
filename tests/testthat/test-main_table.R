@@ -5,7 +5,7 @@ test_that("main_table", {
 
   expect_equal(
     colnames(test_main_table),
-    c("group", "labels", "name", "Raw", "z-score", "SS", "Percentile", "Description")
+    c("group", "labels", "name", "Raw", "Raw_suffix", "z-score", "SS", "Percentile", "Description")
   )
 
   expect_true(is.numeric(test_main_table$Percentile))
@@ -59,8 +59,8 @@ test_that("main_table", {
         "L Words",
         "Craft Immediate - Verbatim",
         "Craft Immediate - Paraphrase",
-        "Craft Delay - Verbatim",
-        "Craft Delay - Paraphrase",
+        "Craft Delay - Verbatim (225% retained)",
+        "Craft Delay - Paraphrase (87% retained)",
         "Oral Trailmaking Part B - Completion Time",
         "Oral Trailmaking Part B - Errors",
         "GDS-15 (Depression Symptoms)"
@@ -86,11 +86,11 @@ test_that("main_table", {
         "F Words",
         "L Words",
         "Benson Figure Copy",
-        "Benson Delay (NA%; Recog = NA)",
+        "Benson Delay (NA% retained; Recog = NA)",
         "Craft Immediate - Verbatim",
         "Craft Immediate - Paraphrase",
-        "Craft Delay - Verbatim",
-        "Craft Delay - Paraphrase",
+        "Craft Delay - Verbatim (225% retained)",
+        "Craft Delay - Paraphrase (87% retained)",
         "RAVLT Total Learning (NA,NA,NA,NA,NA)",
         "RAVLT Distractor List",
         "RAVLT Short Delay",
@@ -129,6 +129,9 @@ test_that("main_table", {
     ),
     Raw = c(0.5, 15, 24, 7.07, 0, 7, 6, 6, 4, 15, 7, 24, 9, 14, 22, 8, 8, 18,
             7, 39.5, 2, 4),
+    Raw_suffix = c("", "/22", "/50", "&nbspsec", "", "/14", "/9", "/14", "/8",
+                   "", "", "", "", "", "",
+                   "/44", "/25", "/44", "/25","&nbspsec","","/15"),
     `z-score` = c(NA, NA, NA, -0.19807, -0.04167, 0.09524, 0.07692, 0.28571,
                   -0.07692, -0.17391, -1.68571, 0.08046, NA, 0.39583, 2.36957,
                   -1.26761, -1.06383, 0.57143, -0.86275, -0.35426, 1.92754, NA),
@@ -160,7 +163,10 @@ test_that("main_table", {
       "Impaired",
       "Minimal"
     )
-  )
+  ) |>
+    dplyr::mutate(
+      Raw = dplyr::if_else(.data$name == "cog_cdr_global", sprintf("%.1f", .data$Raw), as.character(.data$Raw))
+    )
 
   expect_equal(
     test_main_table |> dplyr::mutate(dplyr::across(dplyr::where(is.numeric), \(x) round(x, digits = 5))),

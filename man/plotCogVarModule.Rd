@@ -7,15 +7,13 @@
 \usage{
 plotCogVarUI(id)
 
-plotCogVarServer(id, dat, studyid)
+plotCogVarServer(id, dat, trim = Inf)
 }
 \arguments{
-\item{id}{An ID string to matche module UI and module server}
+\item{id}{An ID string to match module UI and module server}
 
 \item{dat}{Data to use for the plots. Should contain a number of \verb{cog_*}
 variables}
-
-\item{studyid}{The study id of the participant of interest}
 }
 \description{
 This shiny module is meant for visualizing changes over time of a long list
@@ -23,7 +21,7 @@ of cognitive measures from the WLS ILIAD study.
 }
 \examples{
 \dontrun{
-  plotCogVarApp(demo_data, demo_data$cog_studyid[1])
+  plotCogVarApp(demo_data[1,])
 }
 
 

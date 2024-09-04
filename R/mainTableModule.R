@@ -15,6 +15,7 @@ mainTableUI <- function(id) {
 }
 
 #' @rdname mainTableModule
+#' @export
 mainTableServer <- function(id, dat, studyid, date, table_font_size = 100) {
 
   shiny::moduleServer(id, function(input, output, session) {
