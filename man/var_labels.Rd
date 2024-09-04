@@ -18,7 +18,9 @@ var_labels(
   cog_ravlt_recog_tp = NA,
   cog_ravlt_recog_tn = NA,
   cog_tmtb_err = NA,
-  cog_tmtb_lines = NA
+  cog_tmtb_lines = NA,
+  cog_craft_verb_retain = NA,
+  cog_craft_par_retain = NA
 )
 }
 \arguments{

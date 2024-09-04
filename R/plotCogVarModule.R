@@ -116,8 +116,9 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
 
 
 
-    shiny::observeEvent(input$raw_or_standard, {
-      if (input$raw_or_standard == "standardized") {
+    shiny::observe(#input$raw_or_standard,
+      {
+      if (input$raw_or_standard == "standardized" | input$var_to_plot == "cog_cdr_global") {
         output$shade_descriptions <- shiny::renderUI({
           shiny::checkboxInput(
             inputId = NS(id, "shade_descriptions"),
@@ -143,9 +144,8 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
     # },
     # {
 
-      print(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")))
-
-      print(any(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")) %in% colnames(dat)))
+      # print(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")))
+      # print(any(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")) %in% colnames(dat)))
 
       if (any(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")) %in% colnames(dat))) {
 

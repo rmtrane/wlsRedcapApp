@@ -52,7 +52,8 @@ ui <- page_navbar(
           full_screen = T,
           card_header("Longitudinal Trends"),
           card_body(
-            plotCogVarUI("plot_cog_var")
+            plotCogVarUI("plot_cog_var"),
+            fillable = F
           )
         )
       )
