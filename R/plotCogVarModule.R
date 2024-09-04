@@ -30,8 +30,8 @@ plotCogVarUI <- function(id) {
         choices = NULL
       )
     ),
-    shiny::plotOutput(shiny::NS(id, "plotCogVar"), width = "100%"),
-    shiny::uiOutput(shiny::NS(id, "shade_descriptions"))
+    shiny::plotOutput(shiny::NS(id, "plotCogVar"), width = "100%")# ,
+    # shiny::uiOutput(shiny::NS(id, "shade_descriptions"))
   )
 }
 
@@ -154,8 +154,8 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
             dat,
             var_to_plot = input$var_to_plot,
             type = input$raw_or_standard,
-            shade_descriptions = input$shade_descriptions,
-            trim
+            shade_descriptions = F, # input$shade_descriptions,
+            trim = trim
           ) +
             ggplot2::labs(
               title = cog_vars_labels[input$var_to_plot]
