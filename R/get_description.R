@@ -1,9 +1,10 @@
 #' Get Description
 #'
 #' @param raw Raw score of cognitive variable
-#' @param z_score
+#' @param z_score z-scores corresponding to raw scores
+#' @param ss Standardized scores corresponding to raw scores
+#' @param cog_var Name of cognitive variable
 #'
-#' @export
 get_descriptions <- function(raw, z_score, ss, cog_var) {
   percentiles <- get_percentiles(z_score, ss, cog_var)
 
