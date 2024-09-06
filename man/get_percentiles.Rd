@@ -17,3 +17,4 @@ get_percentiles(z_score, ss, cog_var)
 \description{
 Get percentiles from z-scores, Standardized Scores and name of cognitive variable.
 }
+\keyword{internal}

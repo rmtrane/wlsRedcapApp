@@ -7,6 +7,8 @@
 #' @param cog_var character vector indicating what cognitive score each entry of
 #'   `z_score` and `ss` correspond to.
 #'
+#' @keywords internal
+#'
 get_percentiles <- function(z_score, ss, cog_var) {
   stopifnot('"cog_var" must be given' = !missingArg(z_score))
   stopifnot('"cog_var" must either be length one or same length as "z_score"' = length(cog_var) %in% c(1, length(z_score)))
