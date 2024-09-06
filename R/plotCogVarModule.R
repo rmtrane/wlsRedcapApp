@@ -50,31 +50,32 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
     var_avail <- shiny::reactiveVal()
 
     cur_pt_dat <- dat |>
-        dplyr::select(
-          # Identifiers
-          "cog_studyid", # :"cog_education",
-          "cog_test_date",
-          # Get all scores
-          tidyselect::matches(names(cog_vars_labels))
-        ) |>
-        # Rename the scores that have not been adjusted. These should be
-        # raw_(score)
-        dplyr::rename_with(
-          .fn = \(x) paste0("raw_", x),
-          .cols = tidyselect::matches(paste0("^", names(cog_vars_labels)))
-        ) |>
-        tidyr::pivot_longer(
-          cols = c(
-            tidyselect::starts_with("raw"),
-            tidyselect::starts_with("standardized"),
-            tidyselect::starts_with("ss_")
-          ),
-          names_to = c(".value", "name"),
-          names_pattern = c("(raw|standardized|ss)_(.+)")
-        ) |>
-        dplyr::filter(
-          !is.na(.data$raw)
-        )
+      dplyr::select(
+        # Identifiers
+        "cog_studyid", # :"cog_education",
+        "cog_test_date",
+        # Get all scores
+        tidyselect::matches(names(cog_vars_labels))
+      ) |>
+      # Rename the scores that have not been adjusted. These should be
+      # raw_(score)
+      dplyr::rename_with(
+        .fn = \(x) paste0("raw_", x),
+        .cols = tidyselect::matches(paste0("^", names(cog_vars_labels)))
+      ) |>
+      # select(where(\(x) sum(!is.na(x)) > 0)) |>
+      tidyr::pivot_longer(
+        cols = c(
+          tidyselect::starts_with("raw"),
+          tidyselect::starts_with("standardized"),
+          tidyselect::starts_with("ss_")
+        ),
+        names_to = c(".value", "name"),
+        names_pattern = c("(raw|standardized|ss)_(.+)")
+      ) |>
+      dplyr::filter(
+        !is.na(.data$raw)
+      )
 
 
     var_avail(
@@ -142,11 +143,11 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
     # })
 
     shiny::observe({
-    #   input$raw_or_standard
-    #   input$var_to_plot
-    #   input$shade_descriptions
-    # },
-    # {
+      #   input$raw_or_standard
+      #   input$var_to_plot
+      #   input$shade_descriptions
+      # },
+      # {
 
       print(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")))
 

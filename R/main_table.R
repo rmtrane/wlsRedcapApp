@@ -246,52 +246,52 @@ main_table <- function(
       .after = "name"
     ) |>
     # Remove rows with no raw observations
-    dplyr::filter(!is.na(.data$Raw)) |>
+    dplyr::filter(!is.na(.data$Raw))
+
+
+  for_main_table_2 <- for_main_table |>
     dplyr::mutate(
       # Get percentiles. This is done differently for different variables.
-      Percentile = dplyr::case_when(
-        # For time and number of errors, we want right-tailed probabilities
-        .data$name %in% c("cog_tmta_time", "cog_tmtb_time",
-                          "cog_otmta_time", "cog_otmtb_time",
-                          "cog_otmta_error", "cog_otmtb_error") ~
-          1 - pnorm(.data$`z-score`),
-        # For other standardized scores, left tailed probabilities:
-        .data$name %in% names(for_zscores) ~ pnorm(.data$`z-score`),
-        # Percentiles from SS
-        .data$name %in% c("cog_flc_flu", "cog_digsym", "cog_ravlt_recog_acc") ~
-          c(1,1,1,1,2,5,9,16,25,37,50,63,75,84,91,95,98,99,99,99)[pmax(1, .data$SS+1)]/100,
-        .default = NA
-      ),
+      Percentile = get_percentiles(`z-score`, SS, name),
+      # Percentile = dplyr::case_when(
+      #   # For time and number of errors, we want right-tailed probabilities
+      #   .data$name %in% c("cog_tmta_time", "cog_tmtb_time",
+      #                     "cog_otmta_time", "cog_otmtb_time",
+      #                     "cog_otmta_error", "cog_otmtb_error") ~
+      #     1 - pnorm(.data$`z-score`),
+      #   # For other standardized scores, left tailed probabilities:
+      #   .data$name %in% names(for_zscores) ~ pnorm(.data$`z-score`),
+      #   # Percentiles from SS
+      #   .data$name %in% c("cog_flc_flu", "cog_digsym", "cog_ravlt_recog_acc") ~
+      #     c(1,1,1,1,2,5,9,16,25,37,50,63,75,84,91,95,98,99,99,99)[pmax(1, .data$SS+1)]/100,
+      #   .default = NA
+      # ),
       # Get description. Again, this is done differently for different variables.
-      Description = dplyr::case_when(
-        .data$name == "cog_cdr_global" ~ c("Normal", "Very Mild", "Mild" ,"Moderate", "Severe")[
-          findInterval(.data$Raw, c(0, 2.5, 4.5, 9.5, 16, 18.5, Inf))
-        ],
-        .data$name == "cog_gds15" ~ c("Minimal", "Mild", "Moderate", "Severe")[
-          findInterval(.data$Raw, c(0, 5, 9, 12, 16, Inf))
-        ],
-        .data$name == "cog_moca_clock" & .data$Raw == 3 ~ "Normal",
-        .data$name == "cog_moca_clock" & .data$Raw %in% c(0,1,2) ~ "Impaired",
-        .default = c("Impaired",
-                     "Borderline",
-                     "Low Average",
-                     "Average",
-                     "High Average",
-                     "Superior")[findInterval(.data$Percentile,
-                                              c(0, 0.03, 0.10, 0.25, 0.76, 0.92, Inf))]
-      )
-    )
-
-  widest_raw_value <- max(nchar(for_main_table$Raw))
-
-  for_main_table <- for_main_table |>
+      Description = get_descriptions(Raw, `z-score`, SS, name)
+      # Description = dplyr::case_when(
+      #   .data$name == "cog_cdr_global" ~ c("Normal", "Very Mild", "Mild" ,"Moderate", "Severe")[
+      #     findInterval(.data$Raw, c(0, 2.5, 4.5, 9.5, 16, 18.5, Inf))
+      #   ],
+      #   .data$name == "cog_gds15" ~ c("Minimal", "Mild", "Moderate", "Severe")[
+      #     findInterval(.data$Raw, c(0, 5, 9, 12, 16, Inf))
+      #   ],
+      #   .data$name == "cog_moca_clock" & .data$Raw == 3 ~ "Normal",
+      #   .data$name == "cog_moca_clock" & .data$Raw %in% c(0,1,2) ~ "Impaired",
+      #   .default = c("Impaired",
+      #                "Borderline",
+      #                "Low Average",
+      #                "Average",
+      #                "High Average",
+      #                "Superior")[findInterval(.data$Percentile,
+      #                                         c(0, 0.03, 0.10, 0.25, 0.76, 0.92, Inf))]
+      # )
+    ) |>
     dplyr::mutate(
-      Percentile = .data$Percentile*100,
-      Raw = dplyr::if_else(
-        .data$name == "cog_cdr_global",
-        sprintf("%.1f", .data$Raw),
-        as.character(.data$Raw)
+      across(
+        c("Raw", "z-score", "SS", "Percentile"),
+        \(x) dplyr::if_else(.data$Raw %in% c(995:999), NA, x)
       ),
+      Percentile = .data$Percentile*100,
       Raw_suffix = dplyr::case_match(
         .data$name,
         "cog_moca" ~ "/30",
@@ -309,7 +309,8 @@ main_table <- function(
         "cog_ravlt_a1_a5_total" ~ "/75",
         c("cog_ravlt_b1", "cog_ravlt_a6", "cog_ravlt_a7", "cog_gds15") ~ "/15",
         .default = ""
-      )
+      ),
+      Raw_suffix = dplyr::if_else(is.na(.data$Raw), "", .data$Raw_suffix)
     ) |>
     dplyr::select(
       "group",
@@ -324,7 +325,7 @@ main_table <- function(
     ) |>
     dplyr::arrange("labels")
 
-  for_main_table |>
+  for_main_table_2 |>
     gt::gt(
       rowname_col = "labels",
       groupname_col = "group"
@@ -335,6 +336,16 @@ main_table <- function(
       table.font.names = "Arial",
       column_labels.font.weight = "bold",
       row_group.font.weight = "bold"
+    ) |>
+    ## Some formatting
+    gt::fmt(
+      columns = "Raw",
+      rows = .data$name == "cog_cdr_global",
+      fns = \(x) sprintf("%.1f", x)
+    ) |>
+    gt::fmt(
+      columns = "Raw_suffix",
+      fns = gt::md
     ) |>
     gt::fmt_number(
       columns = "z-score"
@@ -398,10 +409,6 @@ main_table <- function(
         columns = "Raw_suffix",
         rows = .data$Raw_suffix == "&nbspsec"
       )
-    ) |>
-    gt::fmt(
-      columns = "Raw_suffix",
-      fns = gt::md
     ) |>
     ## Style description column
     gt::tab_style(

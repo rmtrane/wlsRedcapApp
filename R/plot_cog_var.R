@@ -50,11 +50,11 @@ plot_cog_var <- function(
 
   dat <- dat |>
     dplyr::filter(
-      abs(.data[[var_to_plot]]) < trim
+      abs(.data[[var_to_plot]]) < trim | is.na(.data[[var_to_plot]])
     )
 
   out_plot <- dat |>
-    ggplot2::ggplot(ggplot2::aes(x = as.character(.data$cog_test_date),
+    ggplot2::ggplot(ggplot2::aes(x = .data$cog_test_date,
                                  y = !!rlang::sym(var_to_plot))) +
       ggplot2::labs(
         x = "Test Date",
@@ -65,6 +65,11 @@ plot_cog_var <- function(
           "ss" ~ "SS",
           .default = NA
         )
+      ) +
+      ggplot2::scale_x_date(
+        breaks = lubridate::as_date(unique(dat$cog_test_date)),
+        minor_breaks = NULL,
+        expand = ggplot2::expansion(mult = 0.3)
       ) +
       ggplot2::theme_bw()
 
@@ -129,7 +134,6 @@ plot_cog_var <- function(
 
 
     if (shade_descriptions) {
-
       if (var_to_plot %in% c("standardized_cog_tmta_time", "standardized_cog_tmtb_time",
                              "standardized_cog_otmta_time", "standardized_cog_otmtb_time",
                              "standardized_cog_otmta_error", "standardized_cog_otmtb_error")) {
@@ -168,5 +172,6 @@ plot_cog_var <- function(
   }
 
   out_plot +
+    ggplot2::geom_line() +
     ggplot2::geom_point()
 }

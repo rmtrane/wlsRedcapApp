@@ -163,10 +163,10 @@ test_that("main_table", {
       "Impaired",
       "Minimal"
     )
-  ) |>
-    dplyr::mutate(
-      Raw = dplyr::if_else(.data$name == "cog_cdr_global", sprintf("%.1f", .data$Raw), as.character(.data$Raw))
-    )
+  ) # |>
+    # dplyr::mutate(
+    #   Raw = dplyr::if_else(.data$name == "cog_cdr_global", sprintf("%.1f", .data$Raw), as.character(.data$Raw))
+    # )
 
   expect_equal(
     test_main_table |> dplyr::mutate(dplyr::across(dplyr::where(is.numeric), \(x) round(x, digits = 5))),
