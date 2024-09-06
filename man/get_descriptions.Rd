@@ -18,3 +18,4 @@ get_descriptions(raw, z_score, ss, cog_var)
 \description{
 Get Description
 }
+\keyword{internal}

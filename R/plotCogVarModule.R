@@ -32,8 +32,8 @@ plotCogVarUI <- function(id) {
         choices = NULL
       )
     ),
-    shiny::plotOutput(shiny::NS(id, "plotCogVar"), width = "100%")# ,
-    # shiny::uiOutput(shiny::NS(id, "shade_descriptions"))
+    shiny::plotOutput(shiny::NS(id, "plotCogVar"), width = "100%"),
+    shiny::uiOutput(shiny::NS(id, "shade_descriptions"))
   )
 }
 
@@ -46,40 +46,42 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
 
   shiny::moduleServer(id, function(input, output, session) {
 
-    # cur_pt_dat <- shiny::reactiveVal()
-    var_avail <- shiny::reactiveVal()
 
-    cur_pt_dat <- dat |>
-      dplyr::select(
-        # Identifiers
-        "cog_studyid", # :"cog_education",
-        "cog_test_date",
-        # Get all scores
-        tidyselect::matches(names(cog_vars_labels))
-      ) |>
-      # Rename the scores that have not been adjusted. These should be
-      # raw_(score)
-      dplyr::rename_with(
-        .fn = \(x) paste0("raw_", x),
-        .cols = tidyselect::matches(paste0("^", names(cog_vars_labels)))
-      ) |>
-      # select(where(\(x) sum(!is.na(x)) > 0)) |>
-      tidyr::pivot_longer(
-        cols = c(
-          tidyselect::starts_with("raw"),
-          tidyselect::starts_with("standardized"),
-          tidyselect::starts_with("ss_")
-        ),
-        names_to = c(".value", "name"),
-        names_pattern = c("(raw|standardized|ss)_(.+)")
-      ) |>
-      dplyr::filter(
-        !is.na(.data$raw)
-      )
+    var_avail <- shiny::reactiveVal()
+    for_var_and_scores_avail <- shiny::reactiveVal()
+
+    for_var_and_scores_avail(
+      dat() |>
+        dplyr::select(
+          # Identifiers
+          "cog_studyid",
+          "cog_test_date",
+          # Get all scores
+          tidyselect::matches(names(cog_vars_labels))
+        ) |>
+        # Rename the scores that have not been adjusted. These should be
+        # raw_(score)
+        dplyr::rename_with(
+          .fn = \(x) paste0("raw_", x),
+          .cols = tidyselect::matches(paste0("^", names(cog_vars_labels)))
+        ) |>
+        tidyr::pivot_longer(
+          cols = c(
+            tidyselect::starts_with("raw"),
+            tidyselect::starts_with("standardized"),
+            tidyselect::starts_with("ss_")
+          ),
+          names_to = c(".value", "name"),
+          names_pattern = c("(raw|standardized|ss)_(.+)")
+        ) |>
+        dplyr::filter(
+          !is.na(.data$raw)
+        )
+    )
 
 
     var_avail(
-      unique(cur_pt_dat$name)
+      unique(for_var_and_scores_avail()$name)
     )
 
     shiny::observeEvent(var_avail(), {
@@ -93,9 +95,12 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
 
     scores_avail <- shiny::reactiveVal()
 
-    shiny::observeEvent(input$var_to_plot, {
+    shiny::observeEvent({
+      input$var_to_plot
+      for_var_and_scores_avail()
+    }, {
       scores_avail(
-        cur_pt_dat |>
+        for_var_and_scores_avail() |>
           dplyr::filter(.data$name == input$var_to_plot) |>
           dplyr::select(tidyselect::any_of(c("raw", "standardized", "ss"))) |>
           dplyr::select(tidyselect::where(\(x) sum(!is.na(x)) > 0)) |>
@@ -121,7 +126,6 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
     }, ignoreInit = T)
 
 
-
     shiny::observeEvent(input$raw_or_standard, {
       if (input$raw_or_standard == "standardized") {
         output$shade_descriptions <- shiny::renderUI({
@@ -137,30 +141,19 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
     })
 
 
-    # observe({
-    #   print(any(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")) %in% colnames(dat)))
-    #   print(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")))
-    # })
-
     shiny::observe({
-      #   input$raw_or_standard
-      #   input$var_to_plot
-      #   input$shade_descriptions
-      # },
-      # {
 
       print(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")))
+      print(any(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")) %in% colnames(dat())))
 
-      print(any(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")) %in% colnames(dat)))
-
-      if (any(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")) %in% colnames(dat))) {
+      if (any(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")) %in% colnames(dat()))) {
 
         output$plotCogVar <- shiny::renderPlot({
           plot_cog_var(
-            dat,
+            dat(),
             var_to_plot = input$var_to_plot,
             type = input$raw_or_standard,
-            shade_descriptions = F, # input$shade_descriptions,
+            shade_descriptions = input$shade_descriptions,
             trim = trim
           ) +
             ggplot2::labs(
@@ -186,7 +179,7 @@ plotCogVarApp <- function(dat, trim = Inf) {
   )
 
   server <- function(input, output, session) {
-    plotCogVarServer("plot_cog_var", dat, trim)
+    plotCogVarServer("plot_cog_var", reactive(dat), trim)
   }
 
   shiny::shinyApp(ui, server)

@@ -54,7 +54,7 @@ plot_cog_var <- function(
     )
 
   out_plot <- dat |>
-    ggplot2::ggplot(ggplot2::aes(x = .data$cog_test_date,
+    ggplot2::ggplot(ggplot2::aes(x = as.character(.data$cog_test_date),
                                  y = !!rlang::sym(var_to_plot))) +
       ggplot2::labs(
         x = "Test Date",
@@ -66,11 +66,11 @@ plot_cog_var <- function(
           .default = NA
         )
       ) +
-      ggplot2::scale_x_date(
-        breaks = lubridate::as_date(unique(dat$cog_test_date)),
-        minor_breaks = NULL,
-        expand = ggplot2::expansion(mult = 0.3)
-      ) +
+      # ggplot2::scale_x_date(
+      #   breaks = lubridate::as_date(unique(dat$cog_test_date)),
+      #   minor_breaks = NULL,
+      #   expand = ggplot2::expansion(mult = 0.3)
+      # ) +
       ggplot2::theme_bw()
 
   #if (var_to_plot == c("cog_ticsm"))
@@ -171,7 +171,10 @@ plot_cog_var <- function(
       )
   }
 
+  if (nrow(dat) > 1) {
+    out_plot <- out_plot + geom_line()
+  }
+
   out_plot +
-    ggplot2::geom_line() +
     ggplot2::geom_point()
 }

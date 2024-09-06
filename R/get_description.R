@@ -5,6 +5,7 @@
 #' @param ss Standardized scores corresponding to raw scores
 #' @param cog_var Name of cognitive variable
 #'
+#' @keywords internal
 get_descriptions <- function(raw, z_score, ss, cog_var) {
   percentiles <- get_percentiles(z_score, ss, cog_var)
 

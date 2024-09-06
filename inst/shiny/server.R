@@ -39,7 +39,11 @@ server <- function(input, output, session) {
       })
 
 
-      plotCogVarServer("plot_cog_var", dat = dplyr::filter(redcap_data(), .data$cog_studyid == input$current_studyid))
+      cur_pt_dat <- reactiveVal()
+
+      cur_pt_dat(dplyr::filter(redcap_data(), .data$cog_studyid == input$current_studyid))
+
+      plotCogVarServer("plot_cog_var", dat = cur_pt_dat)
 
       output$demographics_table <- shiny::renderUI({
         gt::render_gt({
