@@ -3,16 +3,16 @@ server <- function(input, output, session) {
   redcap_data <- dataPrepServer("dataPrep")
 
 
-  observeEvent(tibble::is_tibble(redcap_data()), {
-    nav_select(
+  shiny::observeEvent(tibble::is_tibble(redcap_data()), {
+    bslib::nav_select(
       id = "main_navbar",
       selected = '"Print Outs"'
     )
 
-    updateSelectizeInput(session, "current_studyid", choices = unique(redcap_data()$cog_studyid), server = TRUE)
+    shiny::updateSelectizeInput(session, "current_studyid", choices = unique(redcap_data()$cog_studyid), server = TRUE)
 
-    output$current_date <- renderUI({
-      selectizeInput(
+    output$current_date <- shiny::renderUI({
+      shiny::selectizeInput(
         inputId = 'current_date',
         label = "Visit Date",
         choices = NULL
@@ -21,14 +21,14 @@ server <- function(input, output, session) {
   },
   ignoreInit = T)
 
-  observeEvent(input$current_studyid, {
+  shiny::observeEvent(input$current_studyid, {
 
     if (input$current_studyid %in% redcap_data()$cog_studyid) {
 
-      updateSelectizeInput(
+      shiny::updateSelectizeInput(
         session,
         inputId = "current_date",
-        choices = as.character(unique(filter(redcap_data(), cog_studyid == input$current_studyid)$cog_test_date))
+        choices = as.character(unique(dplyr::filter(redcap_data(), cog_studyid == input$current_studyid)$cog_test_date))
       )
 
       output$functional_measures <- gt::render_gt({
@@ -41,7 +41,7 @@ server <- function(input, output, session) {
 
       plotCogVarServer("plot_cog_var", dat = dplyr::filter(redcap_data(), .data$cog_studyid == input$current_studyid))
 
-      output$demographics_table <- renderUI({
+      output$demographics_table <- shiny::renderUI({
         gt::render_gt({
           demographics_table(
             redcap_data(),
@@ -55,7 +55,7 @@ server <- function(input, output, session) {
 
   cur_main_table <- reactiveVal()
 
-  observeEvent({
+  shiny::observeEvent({
     input$current_date
     input$main_table_pct
   }, {
@@ -69,7 +69,4 @@ server <- function(input, output, session) {
       )
     )
   }, ignoreInit = T)
-
-
-
 }

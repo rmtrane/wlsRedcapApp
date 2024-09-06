@@ -1,57 +1,56 @@
-library(tidyverse)
-library(gt)
-library(gtExtras)
-library(bslib)
+# library(gt)
+# library(gtExtras)
+# library(bslib)
 
-ui <- page_navbar(
+ui <- bslib::page_navbar(
   title = "Main App Title",
   id = "main_navbar",
-  nav_panel(
+  bslib::nav_panel(
     title = "Data Selection",
     value = "dataPrep",
-    card(
-      card_header("Choose Data to Use"),
-      card_body(
+    bslib::card(
+      bslib::card_header("Choose Data to Use"),
+      bslib::card_body(
         dataPrepUI("dataPrep")
       )
     )
   ),
-  nav_panel(
+  bslib::nav_panel(
     title = '"Print Outs"',
-    page_sidebar(
-      sidebar = sidebar(
+    bslib::page_sidebar(
+      sidebar = bslib::sidebar(
         width = "300px",
         ## PLACE DATA UI HERE
-        selectizeInput(
+        shiny::selectizeInput(
           inputId = 'current_studyid',
           label = 'Study IDs',
           choices = NULL
         ),
-        uiOutput("demographics_table"),
-        gt_output("functional_measures"),
-        sliderInput(
+        shiny::uiOutput("demographics_table"),
+        gt::gt_output("functional_measures"),
+        shiny::sliderInput(
           inputId = 'main_table_pct',
           label = "Main Table Font Size (pct)",
           value = 80,
           min = 1, max = 150
         )
       ),
-      layout_columns(
+      bslib::layout_columns(
         col_widths = c(7,5),
-        card(
+        bslib::card(
           id = "main-table",
           full_screen = T,
-          card_header("NACC T-Cog Neuropsychological Assessment Summary Table"),
-          card_body(
-            uiOutput("current_date"),
+          bslib::card_header("NACC T-Cog Neuropsychological Assessment Summary Table"),
+          bslib::card_body(
+            shiny::uiOutput("current_date"),
             mainTableUI("main_table")
           )
         ),
-        card(
+        bslib::card(
           id = "main-plot",
           full_screen = T,
-          card_header("Longitudinal Trends"),
-          card_body(
+          bslib::card_header("Longitudinal Trends"),
+          bslib::card_body(
             plotCogVarUI("plot_cog_var"),
             fillable = F
           )
