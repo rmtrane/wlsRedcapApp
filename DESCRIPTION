@@ -38,7 +38,8 @@ Imports:
     tibble,
     tidyr,
     tidyselect,
-    utils
+    utils,
+    htmltools
 Suggests: 
     knitr,
     rmarkdown,
