@@ -20,28 +20,33 @@
 #' @export
 plotCogVarUI <- function(id) {
   shiny::tagList(
-    bslib::layout_column_wrap(
-      shiny::radioButtons(
-        inputId = shiny::NS(id, "all_or_one_plot"),
-        label = "Show all plots, or choose one?",
-        choices = c("Choose one" = "one", "Show all" = "all")
-      ),
-      shiny::uiOutput(shiny::NS(id, "plot_selection")),
-      shiny::selectizeInput(
-        shiny::NS(id, "raw_or_standard"),
-        label = "Raw, z-score or SS",
-        choices = NULL
-      ),
-      #shiny::uiOutput(shiny::NS(id, "shade_descriptions"))
-      shiny::checkboxInput(
-        inputId = shiny::NS(id, "shade_descriptions"),
-        label = "Shade according to descriptions?",
-        value = FALSE
+    bslib::accordion(
+      bslib::accordion_panel(
+        title = "Options",
+        shiny::radioButtons(
+          inputId = shiny::NS(id, "all_or_one_plot"),
+          label = "Show all plots, or choose one?",
+          choices = c("Choose one" = "one", "Show all" = "all")
+        ),
+        shiny::uiOutput(shiny::NS(id, "plot_selection")),
+        shiny::selectizeInput(
+          shiny::NS(id, "raw_or_standard"),
+          label = "Raw, z-score or SS",
+          choices = NULL
+        ),
+        shiny::checkboxInput(
+          inputId = shiny::NS(id, "shade_descriptions"),
+          label = "Shade according to descriptions?",
+          value = FALSE
+        )
       )
     ),
-    shiny::uiOutput(shiny::NS(id, "plotsUI"))
-    #shiny::plotOutput(shiny::NS(id, "plotCogVar"), width = "100%")
-
+    bslib::card(
+      bslib::card_body(
+        shiny::uiOutput(shiny::NS(id, "plotsUI")),
+        fillable = F
+      )
+    )
   )
 }
 
@@ -213,9 +218,6 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
     })
 
     shiny::observe({
-      # print(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")))
-      # print(any(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")) %in% colnames(dat())))
-
       if (input$all_or_one_plot == "one" & any(c(input$var_to_plot, paste(input$raw_or_standard, input$var_to_plot, sep = "_")) %in% colnames(dat()))) {
         output[[paste(input$var_to_plot, "plot", sep = "_")]] <- shiny::renderPlot({
           plot_cog_var(
@@ -231,7 +233,6 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
         })
       } else {
 
-        print(names(output))
 
         for (var in var_avail()) {
           local({
@@ -303,12 +304,29 @@ plotCogVarServer <- function(id, dat, trim = Inf) {
 #'
 #' @export
 plotCogVarApp <- function(dat, trim = Inf) {
-  ui <- shiny::fluidPage(
-    bslib::card(plotCogVarUI("plot_cog_var"))
+  ui <- bslib::page_fillable(
+    bslib::layout_columns(
+      col_widths = c(7,5),
+      bslib::card(
+        id = "main-table",
+        full_screen = T,
+        bslib::card_header("NACC T-Cog Neuropsychological Assessment Summary Table"),
+        bslib::card_body(
+          mainTableUI("main_table")
+        )
+      ),
+      bslib::card(
+        id = "main-plot",
+        full_screen = T,
+        bslib::card_header("Longitudinal Trends"),
+        plotCogVarUI("plot_cog_var")
+      )
+    )
   )
 
   server <- function(input, output, session) {
     plotCogVarServer("plot_cog_var", shiny::reactive(dat), trim)
+    mainTableServer("main_table", dat = shiny::reactive(dat))
   }
 
   shiny::shinyApp(ui, server)

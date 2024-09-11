@@ -20,7 +20,6 @@ ui <- bslib::page_navbar(
     bslib::page_sidebar(
       sidebar = bslib::sidebar(
         width = "300px",
-        ## PLACE DATA UI HERE
         shiny::selectizeInput(
           inputId = 'current_studyid',
           label = 'Study IDs',
@@ -50,10 +49,7 @@ ui <- bslib::page_navbar(
           id = "main-plot",
           full_screen = T,
           bslib::card_header("Longitudinal Trends"),
-          bslib::card_body(
-            plotCogVarUI("plot_cog_var"),
-            fillable = F
-          )
+          plotCogVarUI("plot_cog_var")
         )
       )
     )

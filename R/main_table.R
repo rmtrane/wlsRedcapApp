@@ -312,6 +312,11 @@ main_table <- function(
       fns = \(x) sprintf("%.1f", x)
     ) |>
     gt::fmt(
+      columns = "Raw",
+      rows = .data$name != "cog_cdr_global",
+      fns = \(x) sprintf("%.0f", x)
+    ) |>
+    gt::fmt(
       columns = "Raw_suffix",
       fns = gt::md
     ) |>

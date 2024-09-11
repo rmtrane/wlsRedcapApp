@@ -1,12 +1,13 @@
 server <- function(input, output, session) {
-
+  bslib::nav_hide(id = "main_navbar", target = '"Print Outs"')
   redcap_data <- dataPrepServer("dataPrep")
 
 
   shiny::observeEvent(tibble::is_tibble(redcap_data()), {
-    bslib::nav_select(
+    bslib::nav_show(
       id = "main_navbar",
-      selected = '"Print Outs"'
+      target = '"Print Outs"',
+      select = T
     )
 
     shiny::updateSelectizeInput(session, "current_studyid", choices = unique(redcap_data()$cog_studyid), server = TRUE)
@@ -66,9 +67,10 @@ server <- function(input, output, session) {
     cur_main_table(
       mainTableServer(
         "main_table",
-        dat = redcap_data,
-        studyid = input$current_studyid,
-        date = input$current_date,
+        # dat = redcap_data,
+        dat = reactive(dplyr::filter(redcap_data(), .data$cog_studyid == input$current_studyid, .data$cog_test_date == input$current_date)),
+        # studyid = input$current_studyid,
+        # date = input$current_date,
         table_font_size = input$main_table_pct
       )
     )

@@ -20,15 +20,18 @@ mainTableServer <- function(id, dat, studyid, date, table_font_size = 100) {
 
   shiny::moduleServer(id, function(input, output, session) {
 
-    dat_for_table <- shiny::reactive({
-      dplyr::filter(dat(), .data$cog_studyid == studyid, .data$cog_test_date == date)
-    })
+    # dat_for_table <- shiny::reactive({
+    #   dplyr::filter(dat(), .data$cog_studyid == studyid, .data$cog_test_date == date)
+    # })
 
-    shiny::observeEvent(nrow(dat_for_table()), {
-      if (nrow(dat_for_table()) == 1) {
+    #shiny::observeEvent(nrow(dat_for_table()), {
+    #  if (nrow(dat_for_table()) == 1) {
+    shiny::observeEvent(nrow(dat()), {
+      if (nrow(dat()) == 1) {
         output$mainTable <- gt::render_gt({
           main_table(
-            dat = dat_for_table(),
+            # dat = dat_for_table(),
+            dat = dat(),
             bar_height = 16*table_font_size/100
           ) |>
             gt::cols_width(
@@ -50,13 +53,13 @@ mainTableServer <- function(id, dat, studyid, date, table_font_size = 100) {
 }
 
 
-mainTableApp <- function(dat, studyid = demo_data$cog_studyid[1], date = demo_data$cog_test_date[1]) {
+mainTableApp <- function(dat){# }, studyid = demo_data$cog_studyid[1], date = demo_data$cog_test_date[1]) {
   ui <- shiny::fluidPage(
     mainTableUI("main_table")
   )
 
   server <- function(input, output, session) {
-    mainTableServer("main_table", dat = shiny::reactive(dat), studyid = studyid, date = date)
+    mainTableServer("main_table", dat = shiny::reactive(dat)) #, studyid = studyid, date = date)
   }
 
   shiny::shinyApp(ui, server)
