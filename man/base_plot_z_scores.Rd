@@ -32,3 +32,4 @@ base_plot_z_scores(
 \description{
 Create a base plot where traces can later be added.
 }
+\keyword{internal}
