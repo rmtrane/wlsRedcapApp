@@ -42,15 +42,13 @@ dataPrepServer <- function(id) {
       "Enter Password Here"
     )
 
-    redcap_password_good <- reactiveVal(value = FALSE)
+    redcap_password_good <- shiny::reactiveVal(value = FALSE)
 
-    print(input$file)
+    # print(input$file)
 
+    output$prep_data <- shiny::renderUI({
 
-
-    output$prep_data <- renderUI({
-
-      password_present <- reactive(
+      password_present <- shiny::reactive(
         !is.null(input$password) && input$password != ""
       )
 
@@ -61,7 +59,8 @@ dataPrepServer <- function(id) {
 
         shiny::actionButton(
           inputId = shiny::NS(id, "prep_data"),
-          label = "Go"
+          label = "Go",
+          width = "300px"
         )
 
       }
@@ -74,7 +73,7 @@ dataPrepServer <- function(id) {
         if (redcap_good) {
           shiny::markdown("Locally saved password found.")
         } else {
-          out <- tagList(
+          out <- htmltools::tagList(
             shiny::passwordInput(
               inputId = shiny::NS(id, "password"),
               label = "REDCap API Password",
@@ -89,7 +88,8 @@ dataPrepServer <- function(id) {
         out <- shiny::fileInput(
           inputId = shiny::NS(id, "input_file"),
           label = "Select File",
-          accept = ".csv"
+          accept = ".csv",
+          width = "300px"
         )
 
       out

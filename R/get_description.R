@@ -67,7 +67,8 @@ get_descriptions <- function(raw, z_score, ss, cog_var) {
                  "Low Average",
                  "Average",
                  "High Average",
-                 "Superior")[findInterval(percentiles, c(0.03, 0.10, 0.25, 0.76, 0.92)) + 1]
+                 "Superior",
+                 "Very Superior")[findInterval(percentiles, c(0.03, 0.10, 0.26, 0.76, 0.92, 0.97)) + 1]
   )
 
 }

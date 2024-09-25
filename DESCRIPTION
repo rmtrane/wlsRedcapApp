@@ -39,7 +39,11 @@ Imports:
     tidyr,
     tidyselect,
     utils,
-    htmltools
+    htmltools,
+    RColorBrewer,
+    htmlwidgets,
+    plotly,
+    scales
 Suggests: 
     knitr,
     rmarkdown,

@@ -5,6 +5,8 @@
 #'
 #' @param dat Data to use. Must have exactly one row (data from one participant and one visit).
 #' @param bar_height In pixels. Height of the percentile bars. Default: 16
+#' @param fill_values a named vector of length seven with hex color values to use for categories
+#'   "Impaired", "Borderline", "Low Average", "Average", "High Average", "Superior", "Very Superior"
 #'
 #' @returns An object of class `gt::gt_tbl`
 #'
@@ -16,9 +18,14 @@
 #' @export
 main_table <- function(
     dat,
+    fill_values = setNames(
+      RColorBrewer::brewer.pal(n = 7, "RdYlGn"),
+      nm = c("Impaired", "Borderline", "Low Average", "Average", "High Average", "Superior", "Very Superior")
+    ),
     bar_height = 16
 ) {
 
+  # print(paste("Number of rows:", nrow(dat)))
   stopifnot("Data provided must have exactly one row" = nrow(dat) == 1)
 
   stopifnot(
@@ -202,44 +209,7 @@ main_table <- function(
     ) |>
     dplyr::mutate(
       # Create row groups
-      group = dplyr::case_match(
-        .data$name,
-        c("cog_cdr_global",
-          "cog_moca",
-          "cog_moca_blind",
-          "cog_ticsm") ~ "General Cognition",
-        c("cog_tmta_time",
-          "cog_otmta_time",
-          "cog_otmta_error",
-          "cog_nsf_total",
-          "cog_nsf_span",
-          "cog_nsb_total",
-          "cog_nsb_span",
-          "cog_digsym") ~ "Attention/Processing",
-        c("cog_mint_tot",
-          "cog_animal_flu",
-          "cog_veg_flu",
-          "cog_fl_flu",
-          "cog_flc_flu",
-          "cog_f_flu",
-          "cog_l_flu") ~ "Language",
-        "cog_benson_copy" ~ "Visuospatial",
-        c("cog_benson_delay",
-          "cog_craft_imm_ver",
-          "cog_craft_imm_par",
-          "cog_craft_delay_verb",
-          "cog_craft_delay_par",
-          "cog_ravlt_a1_a5_total",
-          "cog_ravlt_b1",
-          "cog_ravlt_a6",
-          "cog_ravlt_a7",
-          "cog_ravlt_recog_acc") ~ "Memory",
-        c("cog_tmtb_time",
-          "cog_otmtb_time",
-          "cog_otmtb_error",
-          "cog_moca_clock") ~ "Executive Functioning",
-        "cog_gds15" ~ "Mood"
-      ),
+      group = stringr::str_replace_all(.data$name, setNames(cog_vars_groups, paste0("^", names(cog_vars_groups), "$"))),
       # Create row labels
       labels = stringr::str_replace_all(.data$name, cur_labels) |>
         factor(levels = unname(cur_labels)),
@@ -293,7 +263,7 @@ main_table <- function(
     ) |>
     dplyr::arrange("labels")
 
-  for_main_table_2 |>
+  out <- for_main_table_2 |>
     gt::gt(
       rowname_col = "labels",
       groupname_col = "group"
@@ -382,49 +352,80 @@ main_table <- function(
         columns = "Raw_suffix",
         rows = .data$Raw_suffix == "&nbspsec"
       )
-    ) |>
-    ## Style description column
-    gt::tab_style(
-      style = gt::cell_fill("red"),
-      locations = gt::cells_body(
-        columns = .data$Description,
-        rows = .data$Description == "Impaired"
-      )
-    ) |>
-    gt::tab_style(
-      style = gt::cell_fill("darkorange"),
-      locations = gt::cells_body(
-        columns = .data$Description,
-        rows = .data$Description == "Borderline"
-      )
-    ) |>
-    gt::tab_style(
-      style = gt::cell_fill("orange"),
-      locations = gt::cells_body(
-        columns = .data$Description,
-        rows = .data$Description == "Low Average"
-      )
-    ) |>
-    gt::tab_style(
-      style = gt::cell_fill("yellow"),
-      locations = gt::cells_body(
-        columns = .data$Description,
-        rows = .data$Description == "Average"
-      )
-    ) |>
-    gt::tab_style(
-      style = gt::cell_fill("lightgreen"),
-      locations = gt::cells_body(
-        columns = .data$Description,
-        rows = .data$Description == "High Average"
-      )
-    ) |>
-    gt::tab_style(
-      style = gt::cell_fill("green"),
-      locations = gt::cells_body(
-        columns = .data$Description,
-        rows = .data$Description == "Superior"
-      )
     )
+
+  for (desc in names(fill_values)) {
+    out <- out |>
+      gt::tab_style(
+        style = gt::cell_fill(color = fill_values[[desc]]),
+        locations = gt::cells_body(
+          columns = .data$Description,
+          rows = .data$Description == desc
+        )
+      )
+
+    # if (desc == "Impaired") {
+    #   out <- out |>
+    #     gt::tab_style(
+    #       style = gt::cell_text(color = "white"),
+    #       locations = gt::cells_body(
+    #         columns = .data$Description,
+    #         rows = .data$Description == desc
+    #       )
+    #     )
+    # }
+  }
+
+  out
+    # ## Style description column
+    # gt::tab_style(
+    #   style = gt::cell_fill("red"),
+    #   locations = gt::cells_body(
+    #     columns = .data$Description,
+    #     rows = .data$Description == "Impaired"
+    #   )
+    # ) |>
+    # gt::tab_style(
+    #   style = gt::cell_fill("darkorange"),
+    #   locations = gt::cells_body(
+    #     columns = .data$Description,
+    #     rows = .data$Description == "Borderline"
+    #   )
+    # ) |>
+    # gt::tab_style(
+    #   style = gt::cell_fill("orange"),
+    #   locations = gt::cells_body(
+    #     columns = .data$Description,
+    #     rows = .data$Description == "Low Average"
+    #   )
+    # ) |>
+    # gt::tab_style(
+    #   style = gt::cell_fill("yellow"),
+    #   locations = gt::cells_body(
+    #     columns = .data$Description,
+    #     rows = .data$Description == "Average"
+    #   )
+    # ) |>
+    # gt::tab_style(
+    #   style = gt::cell_fill("lightgreen"),
+    #   locations = gt::cells_body(
+    #     columns = .data$Description,
+    #     rows = .data$Description == "High Average"
+    #   )
+    # ) |>
+    # gt::tab_style(
+    #   style = gt::cell_fill("green"),
+    #   locations = gt::cells_body(
+    #     columns = .data$Description,
+    #     rows = .data$Description == "Superior"
+    #   )
+    # ) |>
+    # gt::tab_style(
+    #   style = gt::cell_fill("darkgreen"),
+    #   locations = gt::cells_body(
+    #     columns = .data$Description,
+    #     rows = .data$Description == "Very Superior"
+    #   )
+    # )
 }
 

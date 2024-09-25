@@ -4,10 +4,18 @@
 \alias{main_table}
 \title{Create NACC T-Cog Neuropsychological Assessment Summary Table}
 \usage{
-main_table(dat, bar_height = 16)
+main_table(
+  dat,
+  fill_values = setNames(RColorBrewer::brewer.pal(n = 7, "RdYlGn"), nm = c("Impaired",
+    "Borderline", "Low Average", "Average", "High Average", "Superior", "Very Superior")),
+  bar_height = 16
+)
 }
 \arguments{
 \item{dat}{Data to use. Must have exactly one row (data from one participant and one visit).}
+
+\item{fill_values}{a named vector of length seven with hex color values to use for categories
+"Impaired", "Borderline", "Low Average", "Average", "High Average", "Superior", "Very Superior"}
 
 \item{bar_height}{In pixels. Height of the percentile bars. Default: 16}
 }

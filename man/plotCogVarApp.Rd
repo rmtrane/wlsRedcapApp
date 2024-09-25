@@ -4,13 +4,16 @@
 \alias{plotCogVarApp}
 \title{Shiny App Wrapping the variable plotting module}
 \usage{
-plotCogVarApp(dat, trim = Inf)
+plotCogVarApp(
+  dat,
+  studyids = c("143050g", "241123g", "301022s", "322002g", "372034g", "382030s",
+    "391310s", "440250g", "461231g", "498013s", "524005g", "595004s", "635012g")
+)
 }
 \arguments{
 \item{dat}{Data from REDCap to use}
 
-\item{trim}{default: Inf. Value used to trim scores. Any score with
-abs(score) > trim will be removed.}
+\item{studyids}{vector of studyids to include in drop-down menu}
 }
 \description{
 Shiny App Wrapping the variable plotting module

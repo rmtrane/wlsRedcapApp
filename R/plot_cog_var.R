@@ -198,6 +198,9 @@ plot_cog_var <- function(
           ymax = max(.data$ys),
           .by = "descrs"
         )
+    } else {
+      out_plot <- out_plot +
+        ggplot2::scale_y_continuous(limits = c(y_min, y_max))
     }
 
 

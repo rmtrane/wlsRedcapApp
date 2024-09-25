@@ -7,16 +7,24 @@
 \usage{
 plotCogVarUI(id)
 
-plotCogVarServer(id, dat, trim = Inf)
+plotCogVarServer(
+  id,
+  redcap_data,
+  studyid,
+  fill_values = setNames(RColorBrewer::brewer.pal(n = 7, "RdYlGn"), nm = c("Impaired",
+    "Borderline", "Low Average", "Average", "High Average", "Superior", "Very Superior"))
+)
 }
 \arguments{
 \item{id}{An ID string to match module UI and module server}
 
-\item{dat}{Data to use for the plots. Should contain a number of \verb{cog_*}
+\item{redcap_data}{Data to use for the plots. Should contain a number of \verb{cog_*}
 variables}
 
-\item{trim}{default: Inf. Value used to trim scores. Any score with
-abs(score) > trim will be removed.}
+\item{studyid}{ID of participant; reactive}
+
+\item{fill_values}{a named vector of length seven with hex color values to use for categories
+"Impaired", "Borderline", "Low Average", "Average", "High Average", "Superior", "Very Superior"}
 }
 \description{
 This shiny module is meant for visualizing changes over time of a long list
