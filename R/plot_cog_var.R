@@ -12,15 +12,51 @@
 #' @export
 plot_cog_var <- function(
     dat,
-    # studyid = "102038g",
     var_to_plot = "cog_flc_flu",
     type = c("raw", "standardized", "ss"),
     shade_descriptions = F,
     trim = Inf
 ) {
 
+  fill_values <- c(
+    "Superior" = "green",
+    "High Average" = "lightgreen",
+    "Average" = "yellow",
+    "Low Average" = "orange",
+    "Borderline" = "darkorange",
+    "Impaired" = "red"
+  )
+
+  if (any(stringr::str_detect(var_to_plot, c("time", "error"))))
+    fill_values <- rev(fill_values)
+
   if (is.null(shade_descriptions))
     shade_descriptions <- F
+
+  # If we cannot shade by descriptions, print message and set to F
+  if (shade_descriptions) {
+    if (!var_to_plot %in% c(names(for_zscores),
+                            "cog_flc_flu", "cog_digsym", "cog_ravlt_recog_acc",
+                            "cog_cdr_global", "cog_gds15", "cog_moca_clock")) {
+      message(glue::glue("No descriptions available for '{var_to_plot}'. shade_descriptions set to FALSE"))
+      shade_descriptions <- FALSE
+    }
+
+    if (type != "standardized" & var_to_plot %in% c(names(for_zscores))) {
+      message(glue::glue("type must be 'standardized' to shade by description for {var_to_plot}. shade_descriptions set to FALSE"))
+      shade_descriptions <- FALSE
+    }
+
+    if (type != "ss" & var_to_plot %in% c("cog_flc_flu", "cog_digsym", "cog_ravlt_recog_acc")) {
+      message(glue::glue("type must be 'ss' to shade by description for {var_to_plot}. shade_descriptions set to FALSE"))
+      shade_descriptions <- FALSE
+    }
+
+    if (type != "raw" & var_to_plot %in% c("cog_cdr_global", "cog_gds15", "cog_moca_clock")) {
+      message(glue::glue("type must be 'raw' to shade by description for {var_to_plot}. shade_descriptions set to FALSE"))
+      shade_descriptions <- FALSE
+    }
+  }
 
   # y-limits
   if (type == "raw") {
@@ -54,75 +90,89 @@ plot_cog_var <- function(
     )
 
   out_plot <- dat |>
-    ggplot2::ggplot(ggplot2::aes(x = .data$cog_test_date,
+    ggplot2::ggplot(ggplot2::aes(x = as.character(.data$cog_test_date),
                                  y = !!rlang::sym(var_to_plot))) +
-      ggplot2::labs(
-        x = "Test Date",
-        y = dplyr::case_match(
-          type,
-          "raw" ~ "Raw Scores",
-          "standardized" ~ "z-scores",
-          "ss" ~ "SS",
-          .default = NA
-        )
-      ) +
-      ggplot2::scale_x_date(
-        breaks = lubridate::as_date(unique(dat$cog_test_date)),
-        minor_breaks = NULL,
-        expand = ggplot2::expansion(mult = 0.3)
-      ) +
-      ggplot2::theme_bw()
+    ggplot2::labs(
+      x = "Test Date",
+      y = dplyr::case_match(
+        type,
+        "raw" ~ "Raw Scores",
+        "standardized" ~ "z-scores",
+        "ss" ~ "SS",
+        .default = NA
+      )
+    ) +
+    ggplot2::theme_bw()
 
-  #if (var_to_plot == c("cog_ticsm"))
-  if (type == "raw") {
+  if (type == "raw" & !shade_descriptions) {
     out_plot <- out_plot +
       ggplot2::scale_y_continuous(
         limits = c(ylim_min, ylim_max+1)
       )
   }
 
-  fills <- c("red", "darkorange", "orange", "yellow", "lightgreen", "green")
-
   if (var_to_plot == "cog_cdr_global" & shade_descriptions) {
 
-    for_tiles <- tibble::tibble(
+    tiles <- tibble::tibble(
       y = seq(0, 18, by = 0.5)
     ) |>
       dplyr::mutate(
-        descr = c("Normal", "Very Mild", "Mild" ,"Moderate", "Severe")[
-        findInterval(.data$y, c(0, 2.5, 4.5, 9.5, 16, 18.5, Inf))
-      ]
-    ) |>
-      dplyr::summarize(
-        ymin = min(.data$y) - 0.25,
-        ymax = max(.data$y) + 0.25,
-        .by = .data$descr
+        descrs = get_descriptions(.data$y, cog_var = "cog_cdr_global")
       ) |>
-      dplyr::mutate(
-        fill = dplyr::case_match(
-          .data$descr,
-          "Normal" ~ "green",
-          "Very Mild" ~ "lightgreen",
-          "Mild" ~ "yellow",
-          "Moderate" ~ "orange",
-          "Severe" ~ "red"
-        )
+      dplyr::summarize(
+        ymin = pmax(min(.data$y) - 0.25, 0),
+        ymax = max(.data$y) + 0.25,
+        .by = "descrs"
       )
 
-    out_plot <- out_plot +
-      ggplot2::geom_rect(
-        data = for_tiles,
-        inherit.aes = F,
-        ggplot2::aes(
-          xmin = -Inf,
-          xmax = Inf,
-          ymin = .data$ymin,
-          ymax = .data$ymax,
-          fill = I(.data$fill)
-        ),
-        alpha = 0.2
-      ) +
-      ggplot2::scale_y_continuous(limits = c(NA, NA))
+    fill_values <- c(
+      "Normal" = "green",
+      "Very Mild" = "lightgreen",
+      "Mild" = "yellow",
+      "Moderate" = "orange",
+      "Severe" = "red"
+    )
+  }
+
+  if (var_to_plot == "cog_moca_clock" & shade_descriptions) {
+
+    tiles <- tibble::tibble(
+      y = seq(0, 3, by = 0.5)
+    ) |>
+      dplyr::mutate(
+        descrs = get_descriptions(.data$y, cog_var = "cog_moca_clock")
+      ) |>
+      dplyr::summarize(
+        ymin = pmax(min(.data$y) - 0.25, 0),
+        ymax = max(.data$y) + 0.25,
+        .by = "descrs"
+      )
+
+    fill_values <- c(
+      "Impaired" = "red",
+      "Normal" = "green"
+    )
+  }
+
+  if (var_to_plot == "cog_gds15" & shade_descriptions) {
+    tiles <- tibble::tibble(
+      ys = 0:ylim_max
+    ) |>
+      dplyr::mutate(
+        descrs = get_descriptions(raw = .data$ys, cog_var = var_to_plot)
+      ) |>
+      dplyr::summarise(
+        ymin = pmax(min(.data$ys) - 0.5, 0),
+        ymax = max(.data$ys) + 0.5,
+        .by = "descrs"
+      )
+
+    fill_values <- c(
+      "Severe" = "deepskyblue",
+      "Moderate" = "lightskyblue",
+      "Mild" = "lightblue",
+      "Minimal" = "white"
+    )
   }
 
   if (type == 'standardized') {
@@ -134,44 +184,81 @@ plot_cog_var <- function(
 
 
     if (shade_descriptions) {
-      if (var_to_plot %in% c("standardized_cog_tmta_time", "standardized_cog_tmtb_time",
-                             "standardized_cog_otmta_time", "standardized_cog_otmtb_time",
-                             "standardized_cog_otmta_error", "standardized_cog_otmtb_error")) {
-        fills <- rev(fills)
-      }
 
-      z_scores_from_percentiles <- qnorm(c(0.03, 0.10, 0.25, 0.76, 0.92))
-
+      z_scores_for_plot <- seq(y_min, y_max, by = 0.01)
 
       tiles <- tibble::tibble(
-        ymin = c(y_min, z_scores_from_percentiles),
-        ymax = c(z_scores_from_percentiles, y_max),
-        fills = fills
-      )
-
-      out_plot <- out_plot +
-        ggplot2::geom_rect(
-          data = tiles,
-          ggplot2::aes(
-            xmin = -Inf,
-            xmax = Inf,
-            ymin = .data$ymin,
-            ymax = .data$ymax,
-            fill = I(.data$fills)
-          ),
-          alpha = 0.2,
-          inherit.aes = F
+        ys = seq(y_min, y_max, by = 0.005)
+      ) |>
+        dplyr::mutate(
+          descrs = get_descriptions(raw = NA, z_score = .data$ys, cog_var = stringr::str_remove(var_to_plot, "standardized_"))
+        ) |>
+        dplyr::summarize(
+          ymin = min(.data$ys),
+          ymax = max(.data$ys),
+          .by = "descrs"
         )
+    } else {
+      out_plot <- out_plot +
+        ggplot2::scale_y_continuous(limits = c(y_min, y_max))
     }
 
-    out_plot <- out_plot +
-      ggplot2::scale_y_continuous(
-        limits = c(y_min, y_max),
-        expand = ggplot2::expansion(0, 0)
+
+  }
+
+  if (type == "ss" & shade_descriptions) {
+    tiles <- tibble::tibble(
+      ys = 0:19
+    ) |>
+      dplyr::mutate(
+        descrs = get_descriptions(ss = .data$ys, cog_var = stringr::str_remove(var_to_plot, "ss_"))
+      ) |>
+      dplyr::summarize(
+        ymin = pmax(min(.data$ys) - 0.5, 0),
+        ymax = max(.data$ys) + 0.5,
+        .by = "descrs"
       )
   }
 
+  if (shade_descriptions) {
+    out_plot <- out_plot +
+      ggplot2::geom_rect(
+        data = tiles,
+        inherit.aes = F,
+        ggplot2::aes(
+          xmin = -Inf,
+          xmax = Inf,
+          ymin = .data$ymin,
+          ymax = .data$ymax,
+          fill = .data$descrs
+        ),
+        alpha = 0.2
+      ) +
+      ggplot2::geom_hline(
+        yintercept = with(tiles, (ymin + lag(ymax))/2)[-1],
+        linetype = "dashed",
+        alpha = 0.4
+      ) +
+      ggplot2::scale_y_continuous(
+        expand = ggplot2::expansion(0, 0)
+      ) +
+      ggplot2::scale_fill_manual(
+        values = fill_values,
+        breaks = names(fill_values)
+      ) +
+      ggplot2::guides(
+        fill = ggplot2::guide_legend(title = NULL)
+      ) +
+      ggplot2::theme(
+        legend.key = ggplot2::element_rect(color = "black", linewidth = 0.2)
+      )
+  }
+
+
+  if (length(na.omit(dat[[var_to_plot]])) > 1) {
+    out_plot <- out_plot + ggplot2::geom_line(ggplot2::aes(group = .data$cog_studyid))
+  }
+
   out_plot +
-    ggplot2::geom_line() +
-    ggplot2::geom_point()
+    ggplot2::geom_point(na.rm = T)
 }

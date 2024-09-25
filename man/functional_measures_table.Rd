@@ -4,18 +4,15 @@
 \alias{functional_measures_table}
 \title{Summary Table with Functional Measures}
 \usage{
-functional_measures_table(dat, studyid = "102038g")
+functional_measures_table(dat)
 }
 \arguments{
 \item{dat}{Data set to use; see \code{demo_data} for example}
-
-\item{studyid}{String giving participant id. Must be length 1 and one of
-the IDs in \code{dat$cog_studyid}.}
 }
 \description{
 Summary Table with Functional Measures
 }
 \examples{
-functional_measures_table(demo_data, demo_data$cog_studyid[1])
+functional_measures_table(dplyr::filter(demo_data, .data$cog_studyid == .data$cog_studyid[1]))
 
 }

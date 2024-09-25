@@ -22,9 +22,9 @@ get_percentiles <- function(z_score, ss, cog_var) {
 
   dplyr::case_when(
     # For time and number of errors, we want right-tailed probabilities
-    cog_var %in% c("cog_tmta_time", "cog_tmtb_time",
-                      "cog_otmta_time", "cog_otmtb_time",
-                      "cog_otmta_error", "cog_otmtb_error") ~ 1 - pnorm(z_score),
+    #cog_var %in% c("cog_tmta_time", "cog_tmtb_time",
+    #               "cog_otmta_time", "cog_otmtb_time",
+    #               "cog_otmta_error", "cog_otmtb_error") ~ 1 - pnorm(z_score),
     # For other standardized scores, left tailed probabilities:
     cog_var %in% names(for_zscores) ~ pnorm(z_score),
     # Percentiles from SS

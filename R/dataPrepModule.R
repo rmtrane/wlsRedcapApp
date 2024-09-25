@@ -24,10 +24,7 @@ dataPrepUI <- function(id) {
       )
     ),
     shiny::uiOutput(shiny::NS(id, "data_upload_or_password")),
-    shiny::actionButton(
-      inputId = shiny::NS(id, "prep_data"),
-      label = "Go"
-    )
+    shiny::uiOutput(shiny::NS(id, "prep_data"))
   )
 }
 
@@ -36,34 +33,67 @@ dataPrepUI <- function(id) {
 dataPrepServer <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
 
+    redcap_good <- file.exists(here::here("data-raw/.encrypted-api-token-passwd")) |
+      !is.null(getOption("wlsRedcapApp_password"))
+
     placeholder_text <- dplyr::if_else(
-      file.exists(here::here("data-raw/.encrypted-api-token-passwd")) |
-        !is.null(getOption("wlsRedcapApp_password")),
-      "Local password file found.",
+      redcap_good,
+      "Local password found.",
       "Enter Password Here"
     )
+
+    redcap_password_good <- shiny::reactiveVal(value = FALSE)
+
+    # print(input$file)
+
+    output$prep_data <- shiny::renderUI({
+
+      password_present <- shiny::reactive(
+        !is.null(input$password) && input$password != ""
+      )
+
+      if (input$data_to_prep == "demo" |
+          (input$data_to_prep == "redcap" & redcap_good) |
+          (input$data_to_prep == "redcap" & password_present()) |
+          (input$data_to_prep == "csv_upload" & !is.null(input$input_file))) {
+
+        shiny::actionButton(
+          inputId = shiny::NS(id, "prep_data"),
+          label = "Go",
+          width = "300px"
+        )
+
+      }
+    })
 
     output$data_upload_or_password <- shiny::renderUI({
       out <- shiny::markdown("Click the 'Go' button to continue with demo data.")
 
-      if (input$data_to_prep == "redcap")
-        out <- shiny::passwordInput(
-          inputId = shiny::NS(id, "password"),
-          label = "REDCap API Password",
-          value = "",
-          placeholder = placeholder_text
-        )
+      if (input$data_to_prep == "redcap") {
+        if (redcap_good) {
+          shiny::markdown("Locally saved password found.")
+        } else {
+          out <- htmltools::tagList(
+            shiny::passwordInput(
+              inputId = shiny::NS(id, "password"),
+              label = "REDCap API Password",
+              # value = "",
+              placeholder = placeholder_text
+            )
+          )
+        }
+      }
 
       if (input$data_to_prep == 'csv_upload')
         out <- shiny::fileInput(
           inputId = shiny::NS(id, "input_file"),
           label = "Select File",
-          accept = ".csv"
+          accept = ".csv",
+          width = "300px"
         )
 
       out
     })
-
 
     redcap_dat <- shiny::reactiveVal()
 
@@ -73,10 +103,9 @@ dataPrepServer <- function(id) {
       shinycssloaders::showPageSpinner()
 
       if (input$data_to_prep == 'redcap') {
-        result <- try(safer::decrypt_string(encrypted_api_token, input$password), silent = T)
+        result <- try(safer::decrypt_string(string = encrypted_api_token, key = input$password), silent = T)
 
         if (inherits(result, "try-error")) {
-
           if (input$password == "") {
             if (!is.null(getOption("wlsRedcapApp_password"))) {
               redcap_dat(
@@ -103,7 +132,7 @@ dataPrepServer <- function(id) {
         } else {
           redcap_dat(
             prep_data(
-              decrypt_password = result
+              decrypt_password = input$password #result
             )
           )
         }
@@ -135,12 +164,9 @@ dataPrepServer <- function(id) {
 #' @export
 
 dataPrepApp <- function() {
-  ui <- bslib::page_sidebar(
-    sidebar = shiny::column(
-      width = 12,
-      dataPrepUI("dataPrep")
-    ),
-    DT::DTOutput("redcap_dat_DT")
+  ui <- bslib::page_fluid(
+      dataPrepUI("dataPrep"),
+      DT::DTOutput("redcap_dat_DT")
   )
 
   server <- function(input, output, session) {

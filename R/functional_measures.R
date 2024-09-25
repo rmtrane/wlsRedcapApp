@@ -1,26 +1,19 @@
 #' Summary Table with Functional Measures
 #'
 #' @param dat Data set to use; see `demo_data` for example
-#' @param studyid String giving participant id. Must be length 1 and one of
-#' the IDs in `dat$cog_studyid`.
 #'
 #' @examples
-#' functional_measures_table(demo_data, demo_data$cog_studyid[1])
+#' functional_measures_table(dplyr::filter(demo_data, .data$cog_studyid == .data$cog_studyid[1]))
 #'
 #' @export
 
 functional_measures_table <- function(
-    dat,
-    studyid = "102038g"
+    dat
 ) {
 
-  stopifnot("More than one study ID provided" = length(studyid) == 1)
-  stopifnot("Study ID not in data set" = studyid %in% dat$cog_studyid)
+  stopifnot("More than one study ID in data" = length(unique(dat$cog_studyid)) == 1)
 
   dat |>
-    dplyr::filter(
-      .data$cog_studyid == studyid
-    ) |>
     dplyr::mutate(
       visit = paste("Visit", order(.data$cog_test_date))
     ) |>
@@ -28,7 +21,9 @@ functional_measures_table <- function(
       "visit",
       `FAS:` = "cog_fas",
       `Informant:` = "cog_iqcode_inform",
-      `Self:` = "cog_iqcode_self"
+      `Self:` = "cog_iqcode_self",
+      `Global:` = "cog_cdr_global",
+      `SOB:` = "cog_cdr_sob",
     ) |>
     tidyr::pivot_longer(
       cols = -"visit"
@@ -44,13 +39,19 @@ functional_measures_table <- function(
     gt::tab_header(
       gt::md("**Functional Measures**")
     ) |>
+    gt::sub_missing() |>
     gt::tab_row_group(
-      label = gt::md("<u>IQ-CODES<u>"),
-      rows = c(2,3),
+      label = gt::md("<u>CDR</u>"),
+      rows = .data$name %in% c("Global:", "SOB:"),
       id = "2"
     ) |>
+    gt::tab_row_group(
+      label = gt::md("<u>IQ-CODES</u>"),
+      rows = stringr::str_detect(.data$name, "Informant|Self"), #c(2,3),
+      id = "3"
+    ) |>
     gt::row_group_order(
-      groups = c(NA, "2")
+      groups = c(NA, "2", "3")
     ) |>
     gt::cols_align("center") |>
     gt::cols_align(
@@ -82,31 +83,23 @@ functional_measures_table <- function(
         weight = gt::px(2),
         color = "lightgrey"
       ),
-      location = gt::cells_row_groups("2")
-    ) |>
-    gt::tab_style(
-      style = gt::cell_borders(
-        sides = c("bottom"),
-        style = 'hidden'
-      ),
-      location = gt::cells_row_groups("2")
+      location = gt::cells_row_groups(c("2", "3"))
     ) |>
     gt::tab_style(
       style = gt::cell_borders(
         sides = "bottom",
         style = "hidden"
       ),
-      locations = gt::cells_body(
-        rows = 2
-      )
-    ) |>
-    gt::tab_style(
-      style = gt::cell_borders(
-        sides = "bottom",
-        style = "hidden"
-      ),
-      locations = gt::cells_stub(
-        rows = 2
+      locations = list(
+        gt::cells_body(
+          rows = .data$name %in% c("Global:", "Informant:")
+        ),
+        gt::cells_stub(
+          rows = .data$name %in% c("Global:", "Informant:")
+        ),
+        gt::cells_row_groups(
+          groups = c("2", "3")
+        )
       )
     ) |>
     gt::tab_options(
@@ -117,6 +110,6 @@ functional_measures_table <- function(
       heading.title.font.size = gt::px(16),
       row_group.font.size = gt::px(16),
       table.font.size = gt::px(16),
-      table.width = gt::px(250)
+      table.width = gt::px(275)
     )
 }

@@ -23,7 +23,10 @@ standardized_ravlt_recog_acc <- function(
   stopifnot(is.numeric(raw_score))
   stopifnot(is.numeric(age))
 
-  stopifnot("Raw scores outside the range 0 to 100 not allowed" = all((raw_score <= 100 & raw_score >= 0) | is.na(raw_score)))
+  raw_score[raw_score %in% c(995, 996, 997, 998, 999)] <- NA
+
+  stopifnot("Raw scores outside the range 0 to 100 not allowed (except for 995, 996, 997, 998, 999)"
+            = all((raw_score <= 100 & raw_score >= 0) | is.na(raw_score)))
   stopifnot(length(setdiff(sex, c("m", "f"))) == 0)
 
   stopifnot("Missing values in 'age' not allowed" = sum(is.na(age)) == 0)

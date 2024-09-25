@@ -4,17 +4,15 @@
 \alias{demographics_table}
 \title{Summary Table with Demographic Information}
 \usage{
-demographics_table(dat, studyid = "102038g")
+demographics_table(dat)
 }
 \arguments{
-\item{dat}{Data from REDCap}
-
-\item{studyid}{String with ID for participant of interest. Much be length 1.}
+\item{dat}{Data from REDCap. Should be a}
 }
 \description{
 Summary Table with Demographic Information
 }
 \examples{
-demographics_table(demo_data, "326231g")
+demographics_table(demo_data[1,])
 
 }

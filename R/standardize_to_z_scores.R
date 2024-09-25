@@ -77,8 +77,16 @@ standardize_to_z_scores <- function(
     by = join_by_vars
   )
 
-  # Return standardized scores
-  with(for_standardizing, (raw_scores - m) / sd)
+  # Get standardized scores. If either time or error, return negative value
+  if (cog_var_name %in% c("cog_tmta_time", "cog_tmtb_time",
+                          "cog_otmta_time", "cog_otmtb_time",
+                          "cog_otmta_error", "cog_otmtb_error")) {
+    standardized_scores <- -with(for_standardizing, (raw_scores - m) / sd)
+  } else {
+    standardized_scores <- with(for_standardizing, (raw_scores - m) / sd)
+  }
+
+  standardized_scores
 
 }
 

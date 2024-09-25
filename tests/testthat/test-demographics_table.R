@@ -1,7 +1,7 @@
 test_that("Demographics table works", {
 
   expect_equal(
-    demographics_table(demo_data, studyid = "326231g")$`_data`,
+    demographics_table(dplyr::filter(demo_data, .data$cog_studyid == "326231g"))$`_data`,
     tibble::tribble(
       ~name, ~value,
       "Study ID:", "326231g",
@@ -16,7 +16,7 @@ test_that("Demographics table works", {
 
 
   expect_equal(
-    demographics_table(demo_data, studyid = "100108g")$`_data`,
+    demographics_table(dplyr::filter(demo_data, .data$cog_studyid == "100108g"))$`_data`,
     tibble::tribble(
       ~name, ~value,
       "Study ID:", "100108g",
