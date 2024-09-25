@@ -10,6 +10,8 @@
 #' @param fill_alpha opacity value for shaded areas
 #' @param source passed to `plotly::plot_ly`
 #'
+#' @keywords internal
+#'
 #' @export
 base_plot_z_scores <- function(
     dat,

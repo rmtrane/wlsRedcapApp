@@ -12,6 +12,7 @@ reference:
       - get_age_group
       - functional_measures_table
       - main_table
+      - longitudinal_table
       - plot_cog_var
       - prep_data
       - standardized_digsym
@@ -37,3 +38,4 @@ reference:
       - ravlt_recog_ranges
       - for_zscores
       - cog_vars_labels
+      - cog_vars_groups
